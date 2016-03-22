@@ -5,11 +5,12 @@ package server;
  */
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
+import enums.DataType;
+import functions.fun;
 public class GameManager {
 
-    public byte [] startPosition(){
-        int posx = 100;
-        return ByteBuffer.allocate(4).putInt(posx).array();
-    }
+
 }

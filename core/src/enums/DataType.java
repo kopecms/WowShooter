@@ -12,6 +12,7 @@ public enum DataType {
         MSG(3),
         OBJECT(4),
         POSITION(5),
+        ID(6),
         NONE(-1);
 
         private final int id;

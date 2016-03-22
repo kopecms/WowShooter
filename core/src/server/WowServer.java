@@ -18,7 +18,7 @@ public class WowServer extends Thread{
         serverSocket.setSoTimeout(1000000);
     }
     public void run(){
-        prepareRoom(1);
+        prepareRoom(2);
     }
     public void prepareRoom(int numberOfPlayers){
         int num = 0;
@@ -62,21 +62,37 @@ public class WowServer extends Thread{
         return client;
     }
 
+
+
     public class ClientHandler extends Thread{
         private Client client;
         public ClientHandler(Client client){
             this.client = client;
         }
         public void run(){
-            String recv;
+            byte [] message;
             while(true){
                 try{
                     DataInputStream in = new DataInputStream(client.socket.getInputStream());
-                    recv = in.readUTF();
-                    System.out.println(recv);
-                    client.offer(recv);
+                    int length = in.readInt();
+                    if(length>0) {
+                        message = new byte[length];
+                        in.readFully(message, 0, message.length); // read the message
+
+                        client.offer(message);
+                    }
+
                 }catch(IOException e){
-                    e.printStackTrace();
+                    try {
+                        client = waitForConnection(client.getNumber());
+                    }
+                    catch (SocketTimeoutException s) {
+                        System.out.println("Socket timed out!");
+                        break;
+                    } catch (IOException s) {
+                        s.printStackTrace();
+                        break;
+                    }
                     break;
                 }
             }

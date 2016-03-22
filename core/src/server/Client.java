@@ -14,24 +14,26 @@ public class Client {
     public Socket socket;
 
     private int number;
-    private Queue recvFromClient = new LinkedList();
+    private Queue<byte []> recvFromClient = new LinkedList<byte []>();
 
     public Client (Socket socket, int number){
         this.socket = socket;
         this.number = number;
     }
 
-    public void send(String s){
-        System.out.println(s);
+    public void send(byte [] s){
         try {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            out.writeUTF(s);
+            out.writeInt(s.length);
+            out.write(s);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void offer(String recv){
+    public int getNumber() { return number; }
+
+    public void offer(byte [] recv){
         recvFromClient.offer(recv);
     }
 }

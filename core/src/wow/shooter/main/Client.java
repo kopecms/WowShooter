@@ -40,10 +40,11 @@ public class Client extends Thread {
         }
     }
 
-    public void send(String s){
+    public void send(byte [] s){
         try {
             DataOutputStream out = new DataOutputStream(client.getOutputStream());
-            out.writeUTF(s);
+            out.writeInt(s.length);
+            out.write(s);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -52,13 +53,17 @@ public class Client extends Thread {
 
     public class ClientRecv extends Thread{
         public void run(){
-            String r;
+            byte[] message;
             while(true) {
                 try {
                     DataInputStream in = new DataInputStream(client.getInputStream());
-                    r = in.readUTF();
-                    System.out.println(r);
-                    manager.handleData(r.getBytes());
+                    int length = in.readInt();
+                    if(length>0) {
+                        message = new byte[length];
+                        in.readFully(message, 0, message.length); // read the message
+                        manager.handleData(message);
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;

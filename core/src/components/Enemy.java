@@ -3,9 +3,9 @@ package components;
 /**
  * Created by kopec on 2016-03-22.
  */
-public class Player {
-    private String name;
-    private int id;
+public class Enemy {
+    String name;
+    int id;
 
     private Position position = new Position();
 
@@ -13,5 +13,4 @@ public class Player {
     public void setPosition(int x, int y) { position.x = x; position.y = y;}
     public int getx(){ return position.x; }
     public int gety(){ return position.y; }
-
 }

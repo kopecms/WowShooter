@@ -7,6 +7,9 @@ import java.util.Map;
  * Created by kopec on 2016-03-22.
  */
 public enum ObjectType {
+    ENEMY(1),
+    BULLET(2),
+
     NONE(-1);
 
     private final int id;

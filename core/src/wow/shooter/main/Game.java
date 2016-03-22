@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import components.Enemy;
+import components.Player;
 import wow.shooter.managers.*;
 public class Game implements ApplicationListener {
 	private SpriteBatch batch;
@@ -15,6 +17,9 @@ public class Game implements ApplicationListener {
 	private Client client;
 	private GameManager manager;
 	private TextureManager textures;
+
+	private Player player;
+
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
@@ -22,6 +27,7 @@ public class Game implements ApplicationListener {
 		font.setColor(Color.RED);
 
 		manager = new GameManager();
+		player = manager.getPlayer();
 		textures = new TextureManager();
 
 		client = new Client("localhost", 5055, manager);
@@ -39,7 +45,10 @@ public class Game implements ApplicationListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.begin();
-		batch.draw(textures.getTexture("player"), 100, 100);
+		batch.draw(textures.getTexture("player"),player.getx(),player.gety());
+		for(Enemy e: manager.objects.enemies){
+			batch.draw(textures.getTexture("player"),e.getx(),e.gety());
+		}
 		font.draw(batch, "Hello World", 200, 200);
 		batch.end();
 	}
