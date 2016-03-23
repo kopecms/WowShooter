@@ -21,6 +21,17 @@ public class Client {
         this.number = number;
     }
 
+    public byte[] poll(){
+        return recvFromClient.poll();
+    }
+    public boolean peek(){
+        if(recvFromClient.peek() != null){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     public void send(byte [] s){
         try {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -36,4 +47,6 @@ public class Client {
     public void offer(byte [] recv){
         recvFromClient.offer(recv);
     }
+
+
 }

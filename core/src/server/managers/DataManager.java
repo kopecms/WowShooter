@@ -1,6 +1,6 @@
-package server;
+package server.managers;
 
-import components.Player;
+import components.agents.Player;
 import enums.DataType;
 import enums.ObjectType;
 import functions.fun;
@@ -27,12 +27,29 @@ public class DataManager {
         return dataToSend;
     }
 
-    public byte [] setPositionData(int x, int y){
+    public byte [] positionData(int x, int y){
         byte [] dataType = { (byte) DataType.POSITION.getId() };
         byte [] posX = ByteBuffer.allocate(4).putInt(x).array();
         byte [] posY = ByteBuffer.allocate(4).putInt(y).array();
         byte [] position = fun.concat(posX,posY);
         byte [] dataToSend = fun.concat(dataType,position);
+        return dataToSend;
+    }
+
+    public byte [] setNameData(int id, String name){
+        byte [] dataType = { (byte) DataType.NAME.getId(), (byte) id};
+        byte [] dataToSend = fun.concat(dataType,name.getBytes());
+        return dataToSend;
+    }
+
+    public byte [] playerOut(int id){
+        byte [] dataToSend = { (byte) DataType.OUT.getId(), (byte) id};
+        return dataToSend;
+    }
+
+    public byte [] createMsg(int id, byte [] msg){
+        byte [] dataType = { (byte) DataType.MSG.getId(), (byte) id};
+        byte [] dataToSend = fun.concat(dataType,msg);
         return dataToSend;
     }
 }

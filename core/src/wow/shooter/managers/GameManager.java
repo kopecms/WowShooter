@@ -1,22 +1,40 @@
 package wow.shooter.managers;
 
-import components.Player;
+import components.agents.Player;
 import enums.DataType;
 import enums.ObjectType;
+import enums.State;
 import functions.fun;
-import components.Enemy;
-import javax.xml.crypto.Data;
+import components.agents.Enemy;
+import wow.shooter.main.Client;
+import enums.*;
 
 /**
  * Created by kopec on 2016-03-22.
  */
-public class GameManager {
+public class GameManager extends Thread{
     private Player player = new Player();
+    private Client client;
+
 
     public ObjectsManager objects = new ObjectsManager();
 
     private DataType data;
+
+    int mausex;
+    int mausey;
+
+    private State state;
     public GameManager(){
+
+    }
+    public void run(){
+        while(true){
+            handleInput();
+        }
+    }
+
+    public void handleInput(){
 
     }
     public void handleData(byte [] recv){
@@ -45,8 +63,12 @@ public class GameManager {
 
         }
     }
+
     public Player getPlayer(){
         return player;
+    }
+    public void setClient(Client client){
+        this.client = client;
     }
 
 }

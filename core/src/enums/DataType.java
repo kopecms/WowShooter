@@ -13,6 +13,14 @@ public enum DataType {
         OBJECT(4),
         POSITION(5),
         ID(6),
+        OUT(7),
+        STATE(8),
+        KILL(9),
+        HIT(10),
+        MOVE(11),
+        SHOOT(12),
+
+
         NONE(-1);
 
         private final int id;

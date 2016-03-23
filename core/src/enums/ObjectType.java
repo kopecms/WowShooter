@@ -9,6 +9,7 @@ import java.util.Map;
 public enum ObjectType {
     ENEMY(1),
     BULLET(2),
+    BLOCK(3),
 
     NONE(-1);
 

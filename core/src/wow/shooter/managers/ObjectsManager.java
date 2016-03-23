@@ -1,6 +1,6 @@
 package wow.shooter.managers;
 
-import components.Enemy;
+import components.agents.Enemy;
 
 import java.util.Vector;
 

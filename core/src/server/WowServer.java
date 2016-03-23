@@ -18,7 +18,7 @@ public class WowServer extends Thread{
         serverSocket.setSoTimeout(1000000);
     }
     public void run(){
-        prepareRoom(2);
+        prepareRoom(1);
     }
     public void prepareRoom(int numberOfPlayers){
         int num = 0;
@@ -79,6 +79,8 @@ public class WowServer extends Thread{
                         message = new byte[length];
                         in.readFully(message, 0, message.length); // read the message
 
+
+                        // obsluge koljeki trzeba ogarnac
                         client.offer(message);
                     }
 
