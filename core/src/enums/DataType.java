@@ -19,6 +19,7 @@ public enum DataType {
         HIT(10),
         MOVE(11),
         SHOOT(12),
+        GETSTATE(13),
 
 
         NONE(-1);

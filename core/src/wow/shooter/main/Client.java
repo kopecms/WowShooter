@@ -11,7 +11,7 @@ import wow.shooter.managers.*;
 public class Client extends Thread {
     private String serverName;
     private int port;
-    Socket client;
+    public Socket client;
     GameManager manager;
     //gameManager
 

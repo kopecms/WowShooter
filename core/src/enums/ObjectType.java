@@ -10,6 +10,7 @@ public enum ObjectType {
     ENEMY(1),
     BULLET(2),
     BLOCK(3),
+    BOX(4),
 
     NONE(-1);
 

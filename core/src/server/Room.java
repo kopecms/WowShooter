@@ -1,6 +1,7 @@
 package server;
 
-import server.managers.DataManager;
+import components.agents.Player;
+import functionsAndStores.DataManager;
 import server.managers.GameManager;
 
 /**
@@ -13,22 +14,19 @@ public class Room extends Thread{
 
     private GameManager manager;
     private DataManager data = new DataManager();
+
     public Room(WowServer server, Client [] clients, int numberOfPlayers){
         this.server = server;
         this.numberOfPlayers = numberOfPlayers;
         this.clients = clients;
 
-        this.manager = new GameManager(clients);
+        data.setBoxes();
+        manager = new GameManager(clients, data);
     }
     public void setUp(){
-       // for(int i=0; i< numberOfPlayers; i++){
-        clients[0].send(data.setIdData(0));
-
-        clients[0].send(data.positionData(400,200));
-        clients[0].send(data.setEnemyData(0,98,50));
-
-
-        //}
+       for(Client c: clients){
+           data.players.addElement(new Player(c.getNumber(),0,0));
+       }
     }
 
     public void run() {

@@ -2,26 +2,38 @@ package wow.shooter.main;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import com.badlogic.gdx.math.Vector2;
+import components.Box;
+import components.agents.Bullet;
 import components.agents.Enemy;
 import components.agents.Player;
-import enums.State;
+import functionsAndStores.DataManager;
 import wow.shooter.controllers.Mouse;
 import wow.shooter.managers.*;
 
+import static functionsAndStores.Data.*;
 
 public class Game implements ApplicationListener , InputProcessor {
+
+	private int screenWidth;
+	private int screenHeight;
+	float centerx;
+	float centery;
+
 	private SpriteBatch batch;
 	private BitmapFont font;
+	private Texture currentTexture;
 
 	private Client client;
-	private GameManager manager = new GameManager();;
+	private GameManager manager;
+	private DataManager data;
 	private TextureManager textures ;
 
 	Mouse mouse = new Mouse();
@@ -30,19 +42,26 @@ public class Game implements ApplicationListener , InputProcessor {
 
 	@Override
 	public void create() {
+		screenWidth = Gdx.graphics.getWidth();
+		screenHeight = Gdx.graphics.getHeight();
+		centerx = screenWidth/2;
+		centery = screenHeight/2;
+
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.setColor(Color.RED);
-
+		data = new DataManager();
 		textures = new TextureManager();
 
-		manager.start();
+		manager = new GameManager(data);
 
 		player = manager.getPlayer();
 
 		client = new Client("localhost", 5055, manager);
+		client.send(new byte [] {13});
 		manager.setClient(client);
 
+		manager.start();
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -54,17 +73,33 @@ public class Game implements ApplicationListener , InputProcessor {
 
 	@Override
 	public void render() {
+		manager.updateGame(Gdx.graphics.getDeltaTime());
+
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		batch.begin();
-		batch.draw(textures.getTexture("player"),player.getx(),player.gety());
-		for(Enemy e: manager.objects.enemies){
-			batch.draw(textures.getTexture("player2"),e.getx(),e.gety());
+		// rysowanie gracza
+
+		currentTexture = textures.getTexture("player");
+		batch.draw(currentTexture,centerx,centery);
+
+		// rysowanie reszty
+		for(Enemy e: data.enemies){
+			batch.draw(textures.getTexture("player2"),
+					centerx + e.position.x - player.position.x, centery + e.position.y - player.position.y);
 		}
-		font.draw(batch, "Hello World", 200, 200);
+		for(Box b: data.boxes){
+			batch.draw(textures.getTexture("box"),
+					centerx + b.position.x - player.position.x, centery + b.position.y - player.position.y);
+		}
+		for(Bullet b: data.bullets){
+			batch.draw(textures.getTexture("bullet"),
+					centerx + b.position.x - player.position.x, centery + b.position.y - player.position.y);
+		}
 		batch.end();
+
 	}
+
 
 	@Override
 	public void resize(int width, int height) {
@@ -80,12 +115,15 @@ public class Game implements ApplicationListener , InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
+		Vector2 velocity = new Vector2(mouse.x-centerx,mouse.y-centery).setLength(Bullet.speed);
+		client.send(setBulletData(velocity));
+		data.bullets.addElement(player.shoot(velocity));
 		return true;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		System.out.println("siemqqqa"); return false;
+		return false;
 	}
 
 	@Override
@@ -95,7 +133,16 @@ public class Game implements ApplicationListener , InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		mouse.x = screenX;
+		mouse.y = Gdx.graphics.getHeight() - screenY;
 
+		// jesli akurat to nie przycisk
+		if(true) {
+			player.destination = new Vector2(player.position.x + mouse.x - centerx,
+					player.position.y + mouse.y - centery);
+			client.send(setDestinationData(player.position.x + mouse.x - centerx,
+					player.position.y + mouse.y - centery));
+		}
 		return false;
 	}
 
@@ -111,7 +158,9 @@ public class Game implements ApplicationListener , InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		System.out.println(screenX); return false;
+		mouse.x = screenX;
+		mouse.y = Gdx.graphics.getHeight() - screenY;
+		return false;
 	}
 
 	@Override

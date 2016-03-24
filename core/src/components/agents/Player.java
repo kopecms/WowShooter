@@ -1,28 +1,41 @@
 package components.agents;
 
-import components.agents.attributes.Position;
+import com.badlogic.gdx.math.Vector2;
+
 
 /**
  * Created by kopec on 2016-03-22.
  */
+
 public class Player {
     private String name;
     private int id;
-    private Position position = new Position();
+    private float speed = 200;
 
-    public void move(){
+    public Vector2 position = new Vector2();
+    public Vector2 destination = new Vector2();
+    public Vector2 velocity = new Vector2();
 
+    public Player(int id, float x, float y){
+        this.id = id;
+        position = new Vector2(x,y);
     }
-    public void shoot(){
 
+    public void move(float dt){
+        velocity.set(new Vector2(destination.x-position.x,destination.y-position.y).limit(speed));
+        position.x += velocity.x * dt;
+        position.y += velocity.y * dt;
     }
 
+    public Bullet shoot(Vector2 direction){
+        Bullet bullet = new Bullet(position,direction);
+        return bullet;
+    }
 
-
-
-    public void setId(int id) { this.id = id; }
-    public void setPosition(int x, int y) { position.x = x; position.y = y;}
-    public float getx(){ return position.x; }
-    public float gety(){ return position.y; }
-
+    public int getId(){
+        return id;
+    }
+    public void setId(int id){
+        this.id = id;
+    }
 }

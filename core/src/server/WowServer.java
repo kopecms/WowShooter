@@ -18,7 +18,7 @@ public class WowServer extends Thread{
         serverSocket.setSoTimeout(1000000);
     }
     public void run(){
-        prepareRoom(1);
+        prepareRoom(2);
     }
     public void prepareRoom(int numberOfPlayers){
         int num = 0;
@@ -30,7 +30,7 @@ public class WowServer extends Thread{
         // oczekiwanie na grczy
         while (true) {
             try {
-                clientsInRoom[num] = waitForConnection(clients.size());
+                clientsInRoom[num] = waitForNewConnection(clients.size());
                 num += 1;
 
                 if (num == numberOfPlayers) {
@@ -49,7 +49,7 @@ public class WowServer extends Thread{
         Thread room = new Room(this, clientsInRoom, numberOfPlayers);
         room.start();
     }
-    public Client waitForConnection(int num) throws SocketTimeoutException,IOException{
+    public Client waitForNewConnection(int num) throws SocketTimeoutException,IOException{
         Socket clientSocket = serverSocket.accept();
         Client client = new Client(clientSocket, num);
 
@@ -60,6 +60,14 @@ public class WowServer extends Thread{
         t.start();
 
         return client;
+    }
+    public void waitForBrokenConnection(int num) throws SocketTimeoutException,IOException{
+        Socket clientSocket = serverSocket.accept();
+
+        clients.get(num).socket = clientSocket;
+        System.out.println("Just connected to " +
+                clientSocket.getRemoteSocketAddress());
+
     }
 
 
@@ -86,7 +94,7 @@ public class WowServer extends Thread{
 
                 }catch(IOException e){
                     try {
-                        client = waitForConnection(client.getNumber());
+                        waitForBrokenConnection(client.getNumber());
                     }
                     catch (SocketTimeoutException s) {
                         System.out.println("Socket timed out!");
@@ -95,7 +103,6 @@ public class WowServer extends Thread{
                         s.printStackTrace();
                         break;
                     }
-                    break;
                 }
             }
         }

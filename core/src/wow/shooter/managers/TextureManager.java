@@ -16,6 +16,7 @@ public class TextureManager {
         textures.put("player2", new Texture("core/assets/player2.png"));
         textures.put("gun", new Texture("core/assets/gun.png"));
         textures.put("bullet", new Texture("core/assets/bullet.png"));
+        textures.put("box", new Texture("core/assets/box.png"));
     };
 
     public Texture getTexture(String textureName){
