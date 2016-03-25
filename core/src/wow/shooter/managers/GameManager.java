@@ -1,12 +1,12 @@
 package wow.shooter.managers;
 
+import com.badlogic.gdx.math.Vector2;
 import components.Box;
 import components.agents.Bullet;
 import components.agents.Player;
 import enums.DataType;
 import enums.ObjectType;
 import functionsAndStores.DataManager;
-import functionsAndStores.ObjectsManager;
 import functionsAndStores.fun;
 import components.agents.Enemy;
 import wow.shooter.main.Client;
@@ -23,6 +23,10 @@ public class GameManager extends Thread{
     int mausex;
     int mausey;
 
+    // flagi bulletow
+    boolean tooFar = true;
+    boolean hit = false;
+
     boolean getState = false;
 
     private State state;
@@ -33,17 +37,56 @@ public class GameManager extends Thread{
         player.move(dt);
         for(Enemy enemy: data.enemies){
             enemy.move(dt);
+
         }
+
         for(Bullet bullet: data.bullets){
             bullet.move(dt);
+
+            tooFar = true;
+            hit = false;
+            // ja trafiony
+            if(bullet.dist(player.position)<50 && !bullet.my) {
+                data.bullets.remove(bullet);
+                break;
+            }
+            if(bullet.dist(player.position)<500){
+                tooFar = false;
+            }
+            for (Enemy enemy : data.enemies) {
+                // ktos trafiony
+                if(bullet.dist(enemy.position)<50 && bullet.my){
+                    hit = true;
+                    break;
+                }
+                if(bullet.dist(enemy.position)<500){
+                    tooFar = false;
+                }
+            }
+            if(tooFar || hit){
+                data.bullets.remove(bullet);
+                break;
+            }
         }
     }
 
 
     public void handleData(byte [] recv){
         DataType dataType = DataType.fromInt((int)recv[0]);
+
         if(dataType == DataType.NUMBER){
 
+        }
+        if(dataType == DataType.HIT){
+
+        }
+        else if(dataType == DataType.SHOOT){
+            for(Enemy enemy: data.enemies){
+                if(enemy.getId() == (int) recv[1] ) {
+                    data.bullets.addElement(new Bullet(enemy.position,
+                            new Vector2(fun.bytesToInt(recv, 2, 4), fun.bytesToInt(recv, 6, 4)).setLength(Bullet.speed)));
+                }
+            }
         }
         else if(dataType == DataType.POSITION){
             player.position.set(fun.bytesToInt(recv,1,4),fun.bytesToInt(recv,5,4));

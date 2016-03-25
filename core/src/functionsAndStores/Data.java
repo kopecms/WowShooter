@@ -11,6 +11,9 @@ import java.nio.ByteBuffer;
  * Created by kopec on 2016-03-24.
  */
 public class Data {
+    public static byte [] setHitData(int id){
+        return  new byte [] { (byte) DataType.HIT.getId(), (byte) id };
+    }
     public static byte [] setBulletData(Vector2 velocity)
     {
         byte [] dataType = { (byte) DataType.SHOOT.getId() };

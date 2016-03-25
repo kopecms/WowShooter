@@ -29,6 +29,7 @@ public class Player {
 
     public Bullet shoot(Vector2 direction){
         Bullet bullet = new Bullet(position,direction);
+        bullet.my = true;
         return bullet;
     }
 

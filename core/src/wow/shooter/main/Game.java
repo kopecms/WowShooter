@@ -81,12 +81,13 @@ public class Game implements ApplicationListener , InputProcessor {
 		// rysowanie gracza
 
 		currentTexture = textures.getTexture("player");
-		batch.draw(currentTexture,centerx,centery);
+		batch.draw(currentTexture,centerx - currentTexture.getWidth()/2,centery - currentTexture.getHeight()/2);
 
 		// rysowanie reszty
 		for(Enemy e: data.enemies){
 			batch.draw(textures.getTexture("player2"),
-					centerx + e.position.x - player.position.x, centery + e.position.y - player.position.y);
+					centerx + e.position.x - player.position.x - currentTexture.getWidth()/2,
+					centery + e.position.y - player.position.y - currentTexture.getHeight()/2);
 		}
 		for(Box b: data.boxes){
 			batch.draw(textures.getTexture("box"),

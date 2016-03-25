@@ -5,7 +5,11 @@ package server.managers;
  */
 
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import components.Box;
+import components.agents.Bullet;
+import components.agents.Enemy;
 import components.agents.Player;
 import enums.DataType;
 import functionsAndStores.DataManager;
@@ -14,6 +18,7 @@ import server.Client;
 import java.util.Arrays;
 
 import static functionsAndStores.Data.*;
+import static functionsAndStores.fun.*;
 
 public class GameManager {
     private Client [] clients;
@@ -26,8 +31,35 @@ public class GameManager {
     }
 
 
-    public void handleGame(){
+    public void handleGame(float dt){
+        for(Player player: dataStore.players){
+            player.move(dt);
 
+
+        }
+        for(Bullet bullet: dataStore.bullets){
+            bullet.move(dt);
+
+            // usuwanie bulletow i sprawdzanie czy ktos trafiony
+            boolean tooFar = true;
+                for (Player player : dataStore.players) {
+
+                    if(bullet.dist(player.position)<50){
+                        for(Client client: clients){
+                            client.send(setHitData(client.getNumber()));
+                        }
+                        dataStore.bullets.remove(bullet);
+                        break;
+                    }
+                    if(bullet.dist(player.position)<500){
+                        tooFar = false;
+                    }
+                }
+            if(tooFar){
+                dataStore.bullets.remove(bullet);
+                break;
+            }
+        }
     }
 
     public void handleData() {
@@ -40,15 +72,23 @@ public class GameManager {
 
                 }
                 else if( data == DataType.SHOOT){
-
+                    dataStore.bullets.addElement(new Bullet(dataStore.players.elementAt(client.getNumber()).position,
+                            new Vector2(bytesToInt(recv,1,4),bytesToInt(recv,5,4))));
+                    for(Client c: clients){
+                        if(c != client){
+                            c.send(setBulletData(client.getNumber(),Arrays.copyOfRange(recv, 1, recv.length)));
+                        }
+                    }
                 }
                 else if( data == DataType.MSG){
 
                 }
                 else if( data == DataType.MOVE){
+                    dataStore.players.elementAt(client.getNumber()).destination.set(
+                            bytesToInt(recv,1,4),bytesToInt(recv,5,4));
                     for(Client c: clients) {
                         if(c != client) {
-
+                            // USTAWIC POZYCJE PLAYEROW
                             c.send(setDestinationData(client.getNumber(), Arrays.copyOfRange(recv, 1, recv.length)));
                         }
                     }
