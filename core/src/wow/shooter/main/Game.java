@@ -10,15 +10,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.math.Vector2;
-import components.Box;
-import components.agents.Bullet;
-import components.agents.Enemy;
-import components.agents.Player;
-import functionsAndStores.DataManager;
+import components.entities.Box;
+import components.entities.Bullet;
+import components.entities.Enemy;
+import components.entities.Player;
+import components.funstore.DataStore;
 import wow.shooter.controllers.Mouse;
+import wow.shooter.logic.Client;
 import wow.shooter.managers.*;
 
-import static functionsAndStores.Data.*;
+import static components.funstore.DataSetter.*;
 
 public class Game implements ApplicationListener , InputProcessor {
 
@@ -33,13 +34,14 @@ public class Game implements ApplicationListener , InputProcessor {
 
 	private Client client;
 	private GameManager manager;
-	private DataManager data;
+	private DataStore data;
 	private TextureManager textures ;
 
 	Mouse mouse = new Mouse();
 
 	private Player player;
 
+	private int namePosition = 30;
 	@Override
 	public void create() {
 		screenWidth = Gdx.graphics.getWidth();
@@ -50,7 +52,7 @@ public class Game implements ApplicationListener , InputProcessor {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.setColor(Color.RED);
-		data = new DataManager();
+		data = new DataStore();
 		textures = new TextureManager();
 
 		manager = new GameManager(data);
@@ -59,6 +61,8 @@ public class Game implements ApplicationListener , InputProcessor {
 
 		client = new Client("localhost", 5055, manager);
 		client.send(new byte [] {13});
+		client.send(setNameData("Kopciu"));
+		player.name = "Kopciu";
 		manager.setClient(client);
 
 		manager.start();
@@ -69,6 +73,7 @@ public class Game implements ApplicationListener , InputProcessor {
 	public void dispose() {
 		batch.dispose();
 		font.dispose();
+		textures.dipose();
 	}
 
 	@Override
@@ -82,17 +87,31 @@ public class Game implements ApplicationListener , InputProcessor {
 
 		currentTexture = textures.getTexture("player");
 		batch.draw(currentTexture,centerx - currentTexture.getWidth()/2,centery - currentTexture.getHeight()/2);
-
+		if(player.name != null) {
+			font.draw(batch, player.name, centerx - currentTexture.getWidth() / 2,
+					centery + currentTexture.getHeight() / 2 + namePosition);
+			font.draw(batch,Integer.toString(player.getHealth()),centerx - currentTexture.getWidth() / 2,
+					centery + currentTexture.getHeight() / 2 + namePosition-15);
+		}
 		// rysowanie reszty
 		for(Enemy e: data.enemies){
-			batch.draw(textures.getTexture("player2"),
+			currentTexture = textures.getTexture("player2");
+			if(e.name != null) {
+				font.draw(batch, e.name, centerx + e.position.x - player.position.x - currentTexture.getWidth()/2,
+						centery + e.position.y - player.position.y + currentTexture.getHeight()/2 + namePosition);
+				font.draw(batch,Integer.toString(e.getHealth()), centerx + e.position.x - player.position.x - currentTexture.getWidth()/2,
+						centery + e.position.y - player.position.y + currentTexture.getHeight()/2 + namePosition-15);
+			}
+			batch.draw(currentTexture,
 					centerx + e.position.x - player.position.x - currentTexture.getWidth()/2,
 					centery + e.position.y - player.position.y - currentTexture.getHeight()/2);
 		}
+
 		for(Box b: data.boxes){
 			batch.draw(textures.getTexture("box"),
 					centerx + b.position.x - player.position.x, centery + b.position.y - player.position.y);
 		}
+
 		for(Bullet b: data.bullets){
 			batch.draw(textures.getTexture("bullet"),
 					centerx + b.position.x - player.position.x, centery + b.position.y - player.position.y);

@@ -1,4 +1,4 @@
-package components.agents;
+package components.entities;
 
 import com.badlogic.gdx.math.Vector2;
 

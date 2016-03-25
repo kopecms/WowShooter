@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by kopec on 2016-03-22.
  */
 public class TextureManager {
-    public Map<String, Texture> textures = new HashMap<String, Texture>();
+    private Map<String, Texture> textures = new HashMap<String, Texture>();
 
     public TextureManager() {
         textures.put("player", new Texture("core/assets/player.png"));
@@ -18,6 +18,11 @@ public class TextureManager {
         textures.put("bullet", new Texture("core/assets/bullet.png"));
         textures.put("box", new Texture("core/assets/box.png"));
     };
+    public void dipose(){
+        for(Texture texture: textures.values()){
+            texture.dispose();
+        }
+    }
 
     public Texture getTexture(String textureName){
         return textures.get(textureName);

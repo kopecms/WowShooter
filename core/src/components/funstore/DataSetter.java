@@ -1,18 +1,21 @@
-package functionsAndStores;
+package components.funstore;
 
 import com.badlogic.gdx.math.Vector2;
-import components.Box;
-import enums.DataType;
-import enums.ObjectType;
+import components.entities.Box;
+import components.enums.DataType;
+import components.enums.ObjectType;
 
 import java.nio.ByteBuffer;
 
 /**
  * Created by kopec on 2016-03-24.
  */
-public class Data {
-    public static byte [] setHitData(int id){
-        return  new byte [] { (byte) DataType.HIT.getId(), (byte) id };
+public class DataSetter {
+    public static byte [] setHitData(int id, int health){
+        byte [] dataType = { (byte) DataType.HIT.getId(), (byte) id };
+        byte [] healthBytes = ByteBuffer.allocate(4).putInt(health).array();
+        byte [] dataToSend = fun.concat(dataType,healthBytes);
+        return dataToSend;
     }
     public static byte [] setBulletData(Vector2 velocity)
     {
@@ -72,9 +75,14 @@ public class Data {
         return dataToSend;
     }
 
-    public static byte [] setNameData(int id, String name){
-        byte [] dataType = { (byte) DataType.NAME.getId(), (byte) id};
+    public static byte [] setNameData(String name){
+        byte [] dataType = { (byte) DataType.NAME.getId()};
         byte [] dataToSend = fun.concat(dataType,name.getBytes());
+        return dataToSend;
+    }
+    public static byte [] setNameData(int id, byte [] name){
+        byte [] dataType = { (byte) DataType.NAME.getId(), (byte) id};
+        byte [] dataToSend = fun.concat(dataType,name);
         return dataToSend;
     }
 

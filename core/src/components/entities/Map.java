@@ -1,7 +1,4 @@
-package components;
-
-import components.agents.Enemy;
-import components.agents.Player;
+package components.entities;
 
 import java.util.Vector;
 

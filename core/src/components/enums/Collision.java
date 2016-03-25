@@ -1,4 +1,4 @@
-package enums;
+package components.enums;
 
 /**
  * Created by kopec on 2016-03-23.

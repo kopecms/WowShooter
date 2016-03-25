@@ -4,6 +4,9 @@ package server;
  * Created by kopec on 2016-03-22.
  */
 
+import server.logic.Client;
+import server.logic.Room;
+
 import java.net.*;
 import java.io.*;
 import java.util.*;

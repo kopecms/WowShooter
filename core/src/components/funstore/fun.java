@@ -1,4 +1,4 @@
-package functionsAndStores;
+package components.funstore;
 
 import java.nio.ByteBuffer;
 
@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
  * Created by kopec on 2016-03-22.
  */
 public class fun {
-    public static byte[] concat(byte[] a, byte[] b) {
+    public static byte[] concat(byte[] a, byte[] b){
         int aLen = a.length;
         int bLen = b.length;
         byte[] c= new byte[aLen+bLen];
@@ -15,9 +15,15 @@ public class fun {
         return c;
     }
 
-    public static int bytesToInt(byte[] bytes,int s, int e) {
+    public static int bytesToInt(byte[] bytes,int s, int e){
         byte [] out = new byte[ e ];
         System.arraycopy(bytes,s,out,0,e);
         return ByteBuffer.wrap(out).getInt();
+    }
+
+    public static String stringFromBytes(byte [] bytes, int s, int i){
+        byte[] c = new byte[i];
+        System.arraycopy(bytes, s, c, 0, i);
+        return new String(c);
     }
 }

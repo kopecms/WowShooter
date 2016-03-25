@@ -1,4 +1,4 @@
-package components.agents;
+package components.entities;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -8,9 +8,12 @@ import com.badlogic.gdx.math.Vector2;
  */
 
 public class Player {
-    private String name;
-    private int id;
-    private float speed = 200;
+    public String name;
+    public int id;
+
+    private int health;
+
+    private float speed = 300;
 
     public Vector2 position = new Vector2();
     public Vector2 destination = new Vector2();
@@ -19,6 +22,18 @@ public class Player {
     public Player(int id, float x, float y){
         this.id = id;
         position = new Vector2(x,y);
+
+        setHealth(100);
+    }
+
+    public void setHealth(int health){
+        if(health <= 100 && health >=0){
+            this.health = health;
+        }
+    }
+
+    public int getHealth(){
+        return health;
     }
 
     public void move(float dt){

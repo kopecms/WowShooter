@@ -1,18 +1,14 @@
-package functionsAndStores;
+package components.funstore;
 
-import components.agents.Bullet;
-import components.agents.Enemy;
-import components.agents.Player;
-import enums.DataType;
-import enums.ObjectType;
-import components.*;
-import java.nio.ByteBuffer;
+import components.entities.*;
+
 import java.util.Vector;
 
 /**
  * Created by kopec on 2016-03-22.
  */
-public class DataManager {
+
+public class DataStore {
     private Map map = new Map();
     public Vector<Player> players = new Vector<Player>();
     public Vector<Enemy> enemies = new Vector<Enemy>();

@@ -5,27 +5,25 @@ package server.managers;
  */
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import components.Box;
-import components.agents.Bullet;
-import components.agents.Enemy;
-import components.agents.Player;
-import enums.DataType;
-import functionsAndStores.DataManager;
-import server.Client;
+import components.entities.Box;
+import components.entities.Bullet;
+import components.entities.Player;
+import components.enums.DataType;
+import components.funstore.DataStore;
+import server.logic.Client;
 
 import java.util.Arrays;
 
-import static functionsAndStores.Data.*;
-import static functionsAndStores.fun.*;
+import static components.funstore.DataSetter.*;
+import static components.funstore.fun.*;
 
 public class GameManager {
     private Client [] clients;
 
-    public DataManager dataStore;
+    public DataStore dataStore;
 
-    public GameManager(Client [] clients, DataManager dataStore){
+    public GameManager(Client [] clients, DataStore dataStore){
         this.clients = clients;
         this.dataStore = dataStore;
     }
@@ -37,28 +35,32 @@ public class GameManager {
 
 
         }
-        for(Bullet bullet: dataStore.bullets){
-            bullet.move(dt);
+        try {
+            for (Bullet bullet : dataStore.bullets) {
+                bullet.move(dt);
 
-            // usuwanie bulletow i sprawdzanie czy ktos trafiony
-            boolean tooFar = true;
+                // usuwanie bulletow i sprawdzanie czy ktos trafiony
+                boolean tooFar = true;
                 for (Player player : dataStore.players) {
-
-                    if(bullet.dist(player.position)<50){
-                        for(Client client: clients){
-                            client.send(setHitData(client.getNumber()));
+                    if (bullet.dist(player.position) < 50) {
+                        player.setHealth(player.getHealth()-10);
+                        for (Client client : clients) {
+                            client.send(setHitData(player.id,player.getHealth()));
                         }
                         dataStore.bullets.remove(bullet);
                         break;
                     }
-                    if(bullet.dist(player.position)<500){
+                    if (bullet.dist(player.position) < 500) {
                         tooFar = false;
                     }
                 }
-            if(tooFar){
-                dataStore.bullets.remove(bullet);
-                break;
+                if (tooFar) {
+                    dataStore.bullets.remove(bullet);
+                    break;
+                }
             }
+        } catch (java.util.ConcurrentModificationException e){
+
         }
     }
 
@@ -67,9 +69,13 @@ public class GameManager {
             if(client.peek()){
                 byte [] recv = client.poll();
                 DataType data = DataType.fromInt((int)recv[0]);
-                System.out.println(data);
-                if( data == DataType.NAME){
 
+                if( data == DataType.NAME){
+                    for(Client c: clients){
+                        if(c != client){
+                            c.send(setNameData(client.getNumber(),Arrays.copyOfRange(recv, 1, recv.length)));
+                        }
+                    }
                 }
                 else if( data == DataType.SHOOT){
                     dataStore.bullets.addElement(new Bullet(dataStore.players.elementAt(client.getNumber()).position,
@@ -110,8 +116,6 @@ public class GameManager {
                         client.send(setBoxData(box));
                     }
                 }
-
-
 
 
             }

@@ -1,4 +1,4 @@
-package server;
+package server.logic;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

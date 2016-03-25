@@ -1,15 +1,16 @@
 package wow.shooter.managers;
 
 import com.badlogic.gdx.math.Vector2;
-import components.Box;
-import components.agents.Bullet;
-import components.agents.Player;
-import enums.DataType;
-import enums.ObjectType;
-import functionsAndStores.DataManager;
-import functionsAndStores.fun;
-import components.agents.Enemy;
-import wow.shooter.main.Client;
+import components.entities.Box;
+import components.entities.Bullet;
+import components.entities.Player;
+import components.enums.DataType;
+import components.enums.ObjectType;
+import components.funstore.DataStore;
+import components.funstore.fun;
+import static components.funstore.fun.stringFromBytes;
+import components.entities.Enemy;
+import wow.shooter.logic.Client;
 
 /**
  * Created by kopec on 2016-03-22.
@@ -18,7 +19,7 @@ public class GameManager extends Thread{
     private Player player = new Player(0,0,0);
     private Client client;
 
-    private DataManager data;
+    private DataStore data;
 
     int mausex;
     int mausey;
@@ -30,7 +31,8 @@ public class GameManager extends Thread{
     boolean getState = false;
 
     private State state;
-    public GameManager(DataManager data){
+
+    public GameManager(DataStore data){
         this.data = data;
     }
     public void updateGame(float dt){
@@ -74,11 +76,23 @@ public class GameManager extends Thread{
     public void handleData(byte [] recv){
         DataType dataType = DataType.fromInt((int)recv[0]);
 
-        if(dataType == DataType.NUMBER){
-
+        if(dataType == DataType.NAME){
+            for(Enemy enemy: data.enemies){
+                if(enemy.getId() == (int) recv[1] ) {
+                    enemy.name = stringFromBytes(recv,2,recv.length-2);
+                }
+            }
         }
-        if(dataType == DataType.HIT){
-
+        else if(dataType == DataType.HIT){
+            for(Enemy enemy: data.enemies){
+                if(player.id == (int) recv[1]){
+                    player.setHealth(fun.bytesToInt(recv, 2, 4));
+                }
+                else if(enemy.getId() == (int) recv[1] )
+                {
+                    enemy.setHealth(fun.bytesToInt(recv, 2, 4));
+                }
+            }
         }
         else if(dataType == DataType.SHOOT){
             for(Enemy enemy: data.enemies){

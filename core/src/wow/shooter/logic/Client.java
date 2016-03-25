@@ -1,4 +1,4 @@
-package wow.shooter.main;
+package wow.shooter.logic;
 
 /**
  * Created by kopec on 2016-03-22.

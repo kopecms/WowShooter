@@ -1,7 +1,8 @@
-package server;
+package server.logic;
 
-import components.agents.Player;
-import functionsAndStores.DataManager;
+import components.entities.Player;
+import components.funstore.DataStore;
+import server.WowServer;
 import server.managers.GameManager;
 
 /**
@@ -9,13 +10,13 @@ import server.managers.GameManager;
  */
 public class Room extends Thread{
     private WowServer server;
-    private Client [] clients;
+    private Client[] clients;
     private int numberOfPlayers;
 
     private long lastFrame = System.nanoTime();
     private long currentFrame = System.nanoTime();
     private GameManager manager;
-    private DataManager data = new DataManager();
+    private DataStore data = new DataStore();
     public Room(WowServer server, Client [] clients, int numberOfPlayers){
         this.server = server;
         this.numberOfPlayers = numberOfPlayers;
