@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
     public String name;
-    public int id;
+    public int id = 0;
 
     private int health;
 

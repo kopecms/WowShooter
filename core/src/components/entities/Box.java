@@ -7,11 +7,10 @@ import com.badlogic.gdx.math.Vector2;
  */
 
 public class Box {
-    public int id;
+    public int id = 0;
     public Vector2 position;
 
-    public Box(int id, float x,float y){
-        this.id = id;
+    public Box(float x,float y){
         this.position = new Vector2(x,y);
     }
 }

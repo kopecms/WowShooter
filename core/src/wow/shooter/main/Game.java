@@ -18,7 +18,8 @@ import components.funstore.DataStore;
 import wow.shooter.controllers.Mouse;
 import wow.shooter.logic.Client;
 import wow.shooter.managers.*;
-
+import java.util.TimerTask;
+import java.util.Timer;
 import static components.funstore.DataSetter.*;
 
 public class Game implements ApplicationListener , InputProcessor {
@@ -46,13 +47,15 @@ public class Game implements ApplicationListener , InputProcessor {
 	public void create() {
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
-		centerx = screenWidth/2;
-		centery = screenHeight/2;
+		centerx = screenWidth / 2;
+		centery = screenHeight / 2;
 
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.setColor(Color.RED);
 		data = new DataStore();
+		data.centerx = centerx;
+		data.centery = centery;
 		textures = new TextureManager();
 
 		manager = new GameManager(data);
@@ -60,20 +63,22 @@ public class Game implements ApplicationListener , InputProcessor {
 		player = manager.getPlayer();
 
 		client = new Client("localhost", 5055, manager);
-		client.send(new byte [] {13});
+		client.send(new byte[]{13});
 		client.send(setNameData("Kopciu"));
 		player.name = "Kopciu";
 		manager.setClient(client);
 
 		manager.start();
 		Gdx.input.setInputProcessor(this);
-	}
 
+	}
 	@Override
 	public void dispose() {
 		batch.dispose();
 		font.dispose();
 		textures.dipose();
+
+		manager.close();
 	}
 
 	@Override
@@ -86,7 +91,7 @@ public class Game implements ApplicationListener , InputProcessor {
 		// rysowanie gracza
 
 		currentTexture = textures.getTexture("player");
-		batch.draw(currentTexture,centerx - currentTexture.getWidth()/2,centery - currentTexture.getHeight()/2);
+		batch.draw(currentTexture,centerx - currentTexture.getWidth()/2,centery- currentTexture.getHeight()/2);
 		if(player.name != null) {
 			font.draw(batch, player.name, centerx - currentTexture.getWidth() / 2,
 					centery + currentTexture.getHeight() / 2 + namePosition);
@@ -106,15 +111,19 @@ public class Game implements ApplicationListener , InputProcessor {
 					centerx + e.position.x - player.position.x - currentTexture.getWidth()/2,
 					centery + e.position.y - player.position.y - currentTexture.getHeight()/2);
 		}
-
-		for(Box b: data.boxes){
-			batch.draw(textures.getTexture("box"),
-					centerx + b.position.x - player.position.x, centery + b.position.y - player.position.y);
-		}
+		try {
+			for (Box b : data.boxes) {
+				batch.draw(textures.getTexture("box"),
+						centerx + b.position.x - player.position.x - currentTexture.getWidth() / 2,
+						centery + b.position.y - player.position.y - currentTexture.getHeight() / 2);
+			}
+		} catch (java.util.ConcurrentModificationException e)
+		{} // do ogarniecia
 
 		for(Bullet b: data.bullets){
 			batch.draw(textures.getTexture("bullet"),
-					centerx + b.position.x - player.position.x, centery + b.position.y - player.position.y);
+					centerx + b.position.x - player.position.x,
+					centery + b.position.y - player.position.y);
 		}
 		batch.end();
 
@@ -158,7 +167,7 @@ public class Game implements ApplicationListener , InputProcessor {
 
 		// jesli akurat to nie przycisk
 		if(true) {
-			player.destination = new Vector2(player.position.x + mouse.x - centerx,
+			player.destination.set(player.position.x + mouse.x - centerx,
 					player.position.y + mouse.y - centery);
 			client.send(setDestinationData(player.position.x + mouse.x - centerx,
 					player.position.y + mouse.y - centery));

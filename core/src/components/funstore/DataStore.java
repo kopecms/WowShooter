@@ -15,6 +15,9 @@ public class DataStore {
     public Vector<Box> boxes = new Vector<Box>();
     public Vector<Bullet> bullets = new Vector<Bullet>();
 
+    public float centerx;
+    public float centery;
+
     public void setBoxes(){
         boxes = new Vector<Box>(map.getBoxes());
     }

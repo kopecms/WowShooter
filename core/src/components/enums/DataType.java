@@ -20,7 +20,9 @@ public enum DataType {
         MOVE(11),
         SHOOT(12),
         GETSTATE(13),
-
+        STOP(14),
+        COLLISION(15),
+        LAGERRORCORRECTION(16),
 
         NONE(-1);
 

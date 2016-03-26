@@ -30,38 +30,7 @@ public class GameManager {
 
 
     public void handleGame(float dt){
-        for(Player player: dataStore.players){
-            player.move(dt);
 
-
-        }
-        try {
-            for (Bullet bullet : dataStore.bullets) {
-                bullet.move(dt);
-
-                // usuwanie bulletow i sprawdzanie czy ktos trafiony
-                boolean tooFar = true;
-                for (Player player : dataStore.players) {
-                    if (bullet.dist(player.position) < 50) {
-                        player.setHealth(player.getHealth()-10);
-                        for (Client client : clients) {
-                            client.send(setHitData(player.id,player.getHealth()));
-                        }
-                        dataStore.bullets.remove(bullet);
-                        break;
-                    }
-                    if (bullet.dist(player.position) < 500) {
-                        tooFar = false;
-                    }
-                }
-                if (tooFar) {
-                    dataStore.bullets.remove(bullet);
-                    break;
-                }
-            }
-        } catch (java.util.ConcurrentModificationException e){
-
-        }
     }
 
     public void handleData() {
@@ -77,9 +46,28 @@ public class GameManager {
                         }
                     }
                 }
+                else if( data == DataType.LAGERRORCORRECTION ){
+                    for(Client c: clients){
+                        if(c != client) {
+                            c.send(recv);
+                        }
+                    }
+                }
+                else if( data == DataType.COLLISION){
+                    for(Client c: clients){
+                        if(c != client) {
+                            c.send(recv);
+                        }
+                    }
+                }
+                else if( data == DataType.HIT){
+                    for(Client c: clients){
+                        if(c != client) {
+                            c.send(recv);
+                        }
+                    }
+                }
                 else if( data == DataType.SHOOT){
-                    dataStore.bullets.addElement(new Bullet(dataStore.players.elementAt(client.getNumber()).position,
-                            new Vector2(bytesToInt(recv,1,4),bytesToInt(recv,5,4))));
                     for(Client c: clients){
                         if(c != client){
                             c.send(setBulletData(client.getNumber(),Arrays.copyOfRange(recv, 1, recv.length)));
@@ -90,8 +78,6 @@ public class GameManager {
 
                 }
                 else if( data == DataType.MOVE){
-                    dataStore.players.elementAt(client.getNumber()).destination.set(
-                            bytesToInt(recv,1,4),bytesToInt(recv,5,4));
                     for(Client c: clients) {
                         if(c != client) {
                             // USTAWIC POZYCJE PLAYEROW
@@ -100,13 +86,14 @@ public class GameManager {
                     }
                 }
                 else if( data == DataType.GETSTATE){
+                    // ustawienia poczatkowe
                     client.send(setIdData(client.getNumber()));
-
                     client.send(positionData((int)dataStore.players.elementAt(client.getNumber()).position.x,
                             (int)dataStore.players.elementAt(client.getNumber()).position.y));
 
                     for(Player p: dataStore.players) {
                         if(p.getId() != client.getNumber()){
+                            client.send(setHitData(p.id,p.getHealth()));
                             client.send(setEnemyData(p.getId(),(int)p.position.x,
                                     (int)p.position.y));
                         }

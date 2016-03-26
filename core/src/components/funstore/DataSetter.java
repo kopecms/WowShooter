@@ -11,6 +11,27 @@ import java.nio.ByteBuffer;
  * Created by kopec on 2016-03-24.
  */
 public class DataSetter {
+    public static byte [] setErrorCorrection(int id, Vector2 position, Vector2 destination){
+        byte [] dataType = { (byte) DataType.LAGERRORCORRECTION.getId(),(byte) id };
+        byte [] posX = ByteBuffer.allocate(4).putInt((int)position.x).array();
+        byte [] posY = ByteBuffer.allocate(4).putInt((int)position.y).array();
+        byte [] desX = ByteBuffer.allocate(4).putInt((int)destination.x).array();
+        byte [] desY = ByteBuffer.allocate(4).putInt((int)destination.y).array();
+        byte [] des = fun.concat(desX,desY);
+        byte [] pos = fun.concat(posX,posY);
+        byte [] data = fun.concat(dataType,pos);
+        byte [] dataToSend = fun.concat(data,des);
+        return dataToSend;
+    }
+    public static byte [] setCollisionData(int id, Vector2 newDestination){
+        byte [] dataType = { (byte) DataType.COLLISION.getId() , (byte) id,};
+        byte [] posX = ByteBuffer.allocate(4).putInt((int)newDestination.x).array();
+        byte [] posY = ByteBuffer.allocate(4).putInt((int)newDestination.y).array();
+        byte [] destination = fun.concat(posX,posY);
+        byte [] dataToSend = fun.concat(dataType,destination);
+        return dataToSend;
+    }
+
     public static byte [] setHitData(int id, int health){
         byte [] dataType = { (byte) DataType.HIT.getId(), (byte) id };
         byte [] healthBytes = ByteBuffer.allocate(4).putInt(health).array();

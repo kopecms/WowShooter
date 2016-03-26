@@ -9,14 +9,17 @@ public class Enemy {
     public String name;
     int id;
     private int health;
-    private float speed = 200;
+    private float speed = 300;
     public Vector2 position = new Vector2();
     public Vector2 destination = new Vector2();
     public Vector2 velocity = new Vector2();
 
-
+    public Vector2 afterCollision = new Vector2();
     public Enemy(){
         setHealth(100);
+    }
+    public void collisionHandler(){
+            destination.set(afterCollision);
     }
 
     public void setHealth(int health){
