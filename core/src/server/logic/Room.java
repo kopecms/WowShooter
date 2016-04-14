@@ -1,8 +1,8 @@
 package server.logic;
 
 import components.entities.Player;
-import components.funstore.DataStore;
-import server.WowServer;
+import components.data.GameData;
+import server.main.WowServer;
 import server.managers.GameManager;
 
 /**
@@ -16,7 +16,7 @@ public class Room extends Thread{
     private long lastFrame = System.nanoTime();
     private long currentFrame = System.nanoTime();
     private GameManager manager;
-    private DataStore data = new DataStore();
+    private GameData data = new GameData();
     public Room(WowServer server, Client [] clients, int numberOfPlayers){
         this.server = server;
         this.numberOfPlayers = numberOfPlayers;

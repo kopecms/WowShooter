@@ -1,4 +1,4 @@
-package wow.shooter.logic;
+package wow.shooter.logic.handlers;
 
 /**
  * Created by kopec on 2016-03-22.
@@ -13,20 +13,20 @@ public class Client extends Thread {
     private int port;
     public Socket client;
     GameManager manager;
-    //gameManager
 
-    public Client(String s,int p, GameManager m){
+    public void create(String s,int p, GameManager m){
         serverName = s;
         port = p;
         manager = m;
-        // Nawiazanie polaczenia
+
         connect();
+
         // Watek odbierajacy dane od serwera i zapisujacy je w recv
         Thread t = new ClientRecv();
 
         t.start();
     }
-    // laczenie z serwerem
+
     public void connect(){
         try
         {

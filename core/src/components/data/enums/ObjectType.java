@@ -1,4 +1,4 @@
-package components.enums;
+package components.data.enums;
 
 import java.util.HashMap;
 import java.util.Map;

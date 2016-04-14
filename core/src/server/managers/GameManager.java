@@ -5,25 +5,27 @@ package server.managers;
  */
 
 
-import com.badlogic.gdx.math.Vector2;
+import components.data.Massage;
 import components.entities.Box;
-import components.entities.Bullet;
 import components.entities.Player;
-import components.enums.DataType;
-import components.funstore.DataStore;
+import components.data.enums.DataType;
+import components.data.GameData;
 import server.logic.Client;
+import server.logic.MassageHandler;
 
 import java.util.Arrays;
 
-import static components.funstore.DataSetter.*;
-import static components.funstore.fun.*;
+import static components.data.functions.DataSetters.*;
 
 public class GameManager {
     private Client [] clients;
 
-    public DataStore dataStore;
+    public GameData dataStore;
+    public MassageHandler massageHandler = new MassageHandler();
+    private Massage massage;
 
-    public GameManager(Client [] clients, DataStore dataStore){
+
+    public GameManager(Client [] clients, GameData dataStore){
         this.clients = clients;
         this.dataStore = dataStore;
     }
@@ -36,6 +38,10 @@ public class GameManager {
     public void handleData() {
         for(Client client: clients){
             if(client.peek()){
+
+               // massageHandler.handle(new Massage(client.poll()));
+
+
                 byte [] recv = client.poll();
                 DataType data = DataType.fromInt((int)recv[0]);
 

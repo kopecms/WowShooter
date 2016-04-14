@@ -1,24 +1,35 @@
-package wow.shooter.logic;
+package wow.shooter.logic.updating;
 
 import components.entities.Box;
 import components.entities.Bullet;
 import components.entities.Enemy;
 import components.entities.Player;
-import components.funstore.DataStore;
+import components.data.GameData;
+
+import static components.data.functions.DataSetters.setHitData;
 
 /**
  * Created by kopec on 2016-03-25.
  */
-public class BulletLogic  {
-    DataStore data;
+public class Bullets {
+    private GameData g = GameData.getInstance();
     Player player;
     boolean remove = true;
     boolean hit = false;
 
-    public BulletLogic(DataStore data, Player player)
-    {
-        this.data = data;
-        this.player = player;
+
+    public void update(float dt){
+        for(Bullet bullet: g.bullets) {
+            bullet.move(dt);
+            if(notNeeded(bullet)){
+                break;
+            }
+            if(gotHit(bullet)){
+                player.setHealth(player.getHealth()-10);
+                client.send(setHitData(player.id,player.getHealth()));
+                break;
+            }
+        }
     }
     public boolean notNeeded(Bullet bullet)
     {

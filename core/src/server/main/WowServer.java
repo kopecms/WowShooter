@@ -1,4 +1,4 @@
-package server;
+package server.main;
 
 /**
  * Created by kopec on 2016-03-22.
