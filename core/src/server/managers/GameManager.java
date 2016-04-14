@@ -5,6 +5,7 @@ package server.managers;
  */
 
 
+import com.badlogic.gdx.math.Vector2;
 import components.data.Massage;
 import components.entities.Box;
 import components.entities.Player;
@@ -12,27 +13,21 @@ import components.data.enums.DataType;
 import components.data.GameData;
 import server.logic.Client;
 import server.logic.MassageHandler;
-
+import java.util.*;
 import java.util.Arrays;
 
 import static components.data.functions.DataSetters.*;
-
+import java.util.*;
 public class GameManager {
-    private Client [] clients;
+    private Vector<Client> clients;
 
-    public GameData dataStore;
+    public GameData g = GameData.getInstance();
     public MassageHandler massageHandler = new MassageHandler();
     private Massage massage;
 
 
-    public GameManager(Client [] clients, GameData dataStore){
-        this.clients = clients;
-        this.dataStore = dataStore;
-    }
-
-
-    public void handleGame(float dt){
-
+    public GameManager(Vector<Client> c){
+        clients = c;
     }
 
     public void handleData() {

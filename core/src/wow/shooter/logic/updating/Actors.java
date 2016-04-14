@@ -5,6 +5,7 @@ import components.data.GameData;
 import components.entities.Box;
 import components.entities.Enemy;
 import components.entities.Player;
+import wow.shooter.logic.handlers.HandleOutput;
 import wow.shooter.main.Game;
 
 import static components.data.functions.DataSetters.setCollisionData;
@@ -14,6 +15,7 @@ import static components.data.functions.DataSetters.setCollisionData;
  */
 public class Actors {
     GameData g = GameData.getInstance();
+    private HandleOutput o = HandleOutput.getInstance();
     Player player = g.player;
 
     int objectsSize = g.objectsSize;
@@ -32,7 +34,7 @@ public class Actors {
                 Vector2 v = new Vector2(player.position.x + player.velocity.y,
                         player.position.y - player.velocity.x);
                 player.destination.set(v);
-                client.send(setCollisionData(player.id,v));
+                o.sendCollision(v);
             }
             for (Enemy enemy : g.enemies) {
                 if (enemy.position.x + objectsSize > box.position.x &&

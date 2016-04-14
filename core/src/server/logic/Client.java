@@ -12,25 +12,14 @@ import java.util.Queue;
  */
 public class Client {
     public Socket socket;
-
+    private static int couter = 0;
     private int number;
-    private Queue<byte []> recvFromClient = new LinkedList<byte []>();
+    private Queue<byte []> recvFromClient = new LinkedList<>();
 
-    public Client (Socket socket, int number){
-        this.socket = socket;
-        this.number = number;
-    }
-
-    public byte[] poll(){
-        return recvFromClient.poll();
-    }
-    public boolean peek(){
-        if(recvFromClient.peek() != null){
-            return true;
-        }
-        else{
-            return false;
-        }
+    public Client (Socket s){
+        couter ++;
+        socket = s;
+        number = couter;
     }
     public void send(byte [] s){
         try {
@@ -44,6 +33,18 @@ public class Client {
 
     public int getNumber() { return number; }
 
+    public boolean peek(){
+        if(recvFromClient.peek() != null){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public byte[] poll(){
+        return recvFromClient.poll();
+    }
     public void offer(byte [] recv){
         recvFromClient.offer(recv);
     }

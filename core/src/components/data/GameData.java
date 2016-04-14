@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import components.entities.*;
 import components.entities.World;
 import wow.shooter.drawing.*;
+import wow.shooter.logic.controllers.Mouse;
 import wow.shooter.logic.handlers.Client;
 import wow.shooter.logic.updating.Bullets;
 import wow.shooter.managers.TextureManager;
@@ -56,6 +57,8 @@ public class GameData {
     public float centery;
     public int screenWidth;
     public int screenHeight;
+
+    public Mouse mouse;
 
     private static GameData holder;
 

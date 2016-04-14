@@ -3,6 +3,7 @@ package wow.shooter.logic.controllers;
 import com.badlogic.gdx.math.Vector2;
 import components.data.GameData;
 import components.entities.Bullet;
+import wow.shooter.logic.handlers.HandleOutput;
 
 import static components.data.functions.DataSetters.setBulletData;
 
@@ -11,10 +12,11 @@ import static components.data.functions.DataSetters.setBulletData;
  */
 public class Keyboard {
     private GameData g = GameData.getInstance();
+    private HandleOutput o = HandleOutput.getInstance();
 
     public void keyDown(int keyCode){
-        Vector2 velocity = new Vector2(mouse.x-centerx,mouse.y-centery).setLength(Bullet.speed);
-        client.send(setBulletData(velocity));
-        data.bullets.addElement(player.shoot(velocity));
+        Vector2 velocity = new Vector2(g.mouse.x-g.centerx,g.mouse.y-g.centery).setLength(Bullet.speed);
+        o.sendBulletData(velocity);
+        g.bullets.addElement(g.player.shoot(velocity));
     }
 }

@@ -36,7 +36,7 @@ public class HandleMassage {
             }
         }
     }
-
+/*
     else if(dataType == DataType.COLLISION){
         for(Enemy enemy: data.enemies){
             if(enemy.getId() == (int) recv[1] )
@@ -94,5 +94,5 @@ public class HandleMassage {
     }
     else if(dataType == DataType.NONE){
 
-    }
+    }*/
 }

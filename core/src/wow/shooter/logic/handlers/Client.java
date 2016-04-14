@@ -6,6 +6,7 @@ package wow.shooter.logic.handlers;
 import java.net.*;
 import java.io.*;
 
+import components.data.Massage;
 import wow.shooter.managers.*;
 
 public class Client extends Thread {
@@ -53,15 +54,15 @@ public class Client extends Thread {
 
     public class ClientRecv extends Thread{
         public void run(){
-            byte[] message;
+            byte[] bytes;
             while(true) {
                 try {
                     DataInputStream in = new DataInputStream(client.getInputStream());
                     int length = in.readInt();
                     if(length>0) {
-                        message = new byte[length];
-                        in.readFully(message, 0, message.length); // read the message
-                        manager.handleData(message);
+                        bytes = new byte[length];
+                        in.readFully(bytes, 0, bytes.length); // read the message
+                        manager.handleData(new Massage(bytes));
                     }
 
                 } catch (IOException e) {

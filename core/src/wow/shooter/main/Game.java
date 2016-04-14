@@ -41,7 +41,7 @@ public class Game implements ApplicationListener , InputProcessor {
 		g.screenHeight = Gdx.graphics.getHeight();
 		g.centerx = g.screenWidth / 2;
 		g.centery = g.screenHeight / 2;
-
+		g.mouse = mouse;
 		manager.start();
 		Gdx.input.setInputProcessor(this);
 	}

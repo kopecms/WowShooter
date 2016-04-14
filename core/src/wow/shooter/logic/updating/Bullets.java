@@ -5,6 +5,7 @@ import components.entities.Bullet;
 import components.entities.Enemy;
 import components.entities.Player;
 import components.data.GameData;
+import wow.shooter.logic.handlers.HandleOutput;
 
 import static components.data.functions.DataSetters.setHitData;
 
@@ -13,6 +14,7 @@ import static components.data.functions.DataSetters.setHitData;
  */
 public class Bullets {
     private GameData g = GameData.getInstance();
+    private HandleOutput o = HandleOutput.getInstance();
     Player player;
     boolean remove = true;
     boolean hit = false;
@@ -26,7 +28,7 @@ public class Bullets {
             }
             if(gotHit(bullet)){
                 player.setHealth(player.getHealth()-10);
-                client.send(setHitData(player.id,player.getHealth()));
+                o.sendHit();
                 break;
             }
         }
@@ -39,7 +41,7 @@ public class Bullets {
             if(bullet.dist(player.position)<500){
                 remove = false;
             }
-            for (Enemy enemy : data.enemies) {
+            for (Enemy enemy : g.enemies) {
                 // ktos trafiony
                 if(bullet.dist(enemy.position)<50 && bullet.my){
                     hit = true;
@@ -49,21 +51,21 @@ public class Bullets {
                     remove = false;
                 }
             }
-            for(Box box: data.boxes){
+            for(Box box: g.boxes){
                 if(bullet.dist(box.position)<50){
                     remove = true;
                     break;
                 }
             }
             if(remove || hit){
-                data.bullets.remove(bullet);
+                g.bullets.remove(bullet);
                 return true;
             }
         return false;
     }
     public boolean gotHit(Bullet bullet){
         if(bullet.dist(player.position)<50 && !bullet.my) {
-            data.bullets.remove(bullet);
+            g.bullets.remove(bullet);
             return true;
         }
         return false;
