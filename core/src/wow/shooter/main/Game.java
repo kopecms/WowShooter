@@ -23,9 +23,9 @@ public class Game implements ApplicationListener, InputProcessor {
     private SimpleMenuHandler menu;
 
     public Game() {
-        this.manager = new GameManager(this.data);
-        this.drawer = new Drawer(this.data);
-        this.menu = new SimpleMenuHandler(this.manager);
+        this.manager = new GameManager(data);
+        this.drawer = new Drawer(data);
+        this.menu = new SimpleMenuHandler(manager);
     }
 
     public void create() {
@@ -53,7 +53,7 @@ public class Game implements ApplicationListener, InputProcessor {
             this.drawer.drawBullets();
 
             if (!this.menu.connected) {
-                // this.menu.getData();
+                // this.menu.drawTextDataDialog();
                 //this.drawer.drawMenuBox();
             }
             this.drawer.batch.end();

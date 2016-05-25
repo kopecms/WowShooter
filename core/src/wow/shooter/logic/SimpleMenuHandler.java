@@ -24,7 +24,7 @@ public class SimpleMenuHandler implements Input.TextInputListener {
         manager = m;
     }
 
-    public void getData(){
+    public void drawTextDataDialogs(){
         if(getNext) {
             getNext = false;
             if (!nick) {

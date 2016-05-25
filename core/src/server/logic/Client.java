@@ -19,7 +19,6 @@ public class Client {
     private Queue<byte []> recvFromClient = new LinkedList<byte []>();
 
     public String name = "";
-    public int health = 0;
     public Vector2 position = new Vector2(0,0);
     public int score = 0;
 

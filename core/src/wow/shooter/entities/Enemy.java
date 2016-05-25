@@ -6,9 +6,11 @@ import com.badlogic.gdx.math.Vector2;
  * Created by kopec on 2016-03-22.
  */
 public class Enemy {
-    public String name;
+    public String name = "";
     public int id;
-    private int health;
+    public boolean dead = false;
+
+    private int health = 100;
     private float speed = 300;
 
     public Vector2 position = new Vector2();

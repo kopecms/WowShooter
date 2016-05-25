@@ -2,137 +2,132 @@ package wow.shooter.managers;
 import com.badlogic.gdx.math.Vector2;
 import wow.shooter.entities.Bullet;
 import wow.shooter.entities.Player;
-import wow.shooter.logic.BulletLogic;
 import wow.shooter.logic.Client;
 import wow.shooter.logic.Update;
-import wow.shooter.managers.DataStore;
-import java.util.*;
 
 
-import com.badlogic.gdx.math.Vector2;
-import components.DataSetter;
+import functions.DataSetter;
 import enums.DataType;
 import java.util.ConcurrentModificationException;
 import java.util.Timer;
 import java.util.TimerTask;
-import wow.shooter.entities.Bullet;
-import wow.shooter.entities.Player;
-import wow.shooter.logic.BulletLogic;
-import wow.shooter.logic.Client;
+
 import wow.shooter.logic.DataHandler;
-import wow.shooter.logic.Update;
-import wow.shooter.managers.DataStore;
+
+import static functions.DataSetter.setCollisionData;
+import static functions.DataSetter.setHitData;
 
 public class GameManager extends Thread {
-    private Player player = new Player(0, 0.0F, 0.0F);
+    private Player player = new Player(0, 0, 0);
     private Client client;
     private DataStore data;
-    private BulletLogic bulletLogic;
-    private GameManager.Mouse mouse = new GameManager.Mouse();
-    public String playerName;
-    public String serverAddr;
-    public String port;
+    private Mouse mouse = new Mouse();
+
+    public String playerName = "";
+    public String serverAddr = "localhost";
+    public String port = "5055";
+
     Timer t = new Timer();
 
-    public GameManager(DataStore data) {
+    public GameManager(DataStore d) {
 
-        this.data = data;
-        this.bulletLogic = new BulletLogic(data, this.player);
-        this.player = this.getPlayer();
-        data.player = this.getPlayer();
-        this.client = new Client("localhost", 5055, this);
-        this.client.send(new byte[]{(byte)13});
-        this.client.send(DataSetter.setNameData("Kopciu"));
-        this.player.name = "Kopciu";
-        this.setClient(this.client);
-        this.start();
-        this.startErrorCorrector();
+        data = d;
+        client = new Client("localhost", 5055, this);
+        client.send(new byte[]{(byte)DataType.GETSTATE.getId()});
+        client.send(DataSetter.setNameData("Kopciu"));
+        player.name = "Kopciu";
+
+        start();
+        startErrorCorrector();
     }
 
     public boolean createConnection() {
+        client = new Client(serverAddr, Integer.parseInt(port), this);
+        client.send(new byte[]{(byte)DataType.GETSTATE.getId()});
+        client.send(DataSetter.setNameData(playerName));
+        player.name = playerName;
+
+        if(client.connected)
+            return true;
         return false;
     }
 
     public void shootEvent() {
-        this.data.bullets.addElement(this.player.shoot(this.mouse.getMouse().setLength(Bullet.speed)));
-        this.client.send(DataSetter.setBulletData(this.mouse.getMouse().setLength(Bullet.speed)));
+        data.bullets.addElement(player.shoot(mouse.getMouse().setLength(Bullet.speed)));
+        client.send(DataSetter.setBulletData(mouse.getMouse().setLength(Bullet.speed)));
     }
 
     public void touchDownEvent(int x, int y) {
-        this.player.destination.set(this.player.position.x + (float)x - this.data.centerx, this.player.position.y + (float)y - this.data.centery);
-        this.client.send(DataSetter.setDestinationData(this.player.position.x + (float)x - this.data.centerx, this.player.position.y + (float)y - this.data.centery));
+        player.destination.set(player.position.x + (float)x - data.centerx, player.position.y + (float)y - data.centery);
+        client.send(DataSetter.setDestinationData(player.position.x + (float)x - data.centerx, player.position.y + (float)y - data.centery));
     }
 
     public void moveEvent(int x, int y) {
-        this.mouse.setMouse(x, y);
+        mouse.setMouse(x, y);
     }
 
     public void updateGame(float dt) {
         try {
-            if(!this.player.dead) {
-                Update.updatePlayer(dt, this.player);
-            }
-
-            Update.updateEnemies(dt, this.data.enemies);
-            Update.updateBullets(dt, this.client, this.data.bullets, this.player, this.bulletLogic);
-            Update.collisions(this.player, this.client, 100, this.data.boxes, this.data.enemies);
+            Update.updatePlayer(dt, player);
+            Update.updateEnemies(dt, data.enemies);
+            if(Update.collisions(player, data.boxes, data.enemies))
+                client.send(setCollisionData(player.id, new Vector2(player.position.x + player.velocity.y,
+                        player.position.y - player.velocity.x)));
+            if(Update.updateBullets(dt,player, data.enemies, data.boxes, data.bullets))
+                client.send(setHitData(player.id,player.getHealth()));
         } catch (ConcurrentModificationException var3) {
             ;
         }
 
     }
 
-    public void handleData(byte[] recv) {
+    public DataType handleData(byte[] recv) {
         DataType dataType = DataType.fromInt(recv[0]);
         switch(dataType) {
             case NAME:
-                DataHandler.handleName(recv, this.data.enemies);
+                DataHandler.handleName(recv, data.enemies);
                 break;
             case LAGERRORCORRECTION:
-                DataHandler.handleLag(recv, this.data.enemies);
+                DataHandler.handleLag(recv, data.enemies);
                 break;
             case COLLISION:
-                DataHandler.handleCollison(recv, this.data.enemies);
+                DataHandler.handleCollison(recv, data.enemies);
                 break;
             case HIT:
-                DataHandler.handleHit(recv, this.data.enemies, this.player);
+                DataHandler.handleHit(recv, data.enemies, player);
                 break;
             case SHOOT:
-                DataHandler.handleShoot(recv, this.data.enemies, this.data.bullets);
+                DataHandler.handleShoot(recv, data.enemies, data.bullets);
                 break;
             case POSITION:
-                DataHandler.handlePosition(recv, this.player);
+                DataHandler.handlePosition(recv, player);
                 break;
             case MOVE:
-                DataHandler.handleMove(recv, this.data.enemies);
+                DataHandler.handleMove(recv, data.enemies);
                 break;
             case OBJECT:
-                DataHandler.handleObject(recv, this.data.enemies, this.data.boxes);
+                DataHandler.handleObject(recv, data.enemies, data.boxes);
                 break;
             case ID:
-                this.player.id = recv[1];
+                player.id = recv[1];
+                break;
+            case DISCONNECTED:
+                DataHandler.disconnection(recv, data.enemies);
             case NONE:
         }
-
+        return dataType;
     }
 
-
-    public Player getPlayer() {
-        return this.player;
-    }
-    public void setClient(Client client) {
-        this.client = client;
-    }
 
     public void close() {
-        this.t.cancel();
+        t.cancel();
     }
 
     public void startErrorCorrector() {
-        this.t.scheduleAtFixedRate(new TimerTask() {
+        t.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                if(GameManager.this.client != null) {
-                    GameManager.this.client.send(DataSetter.setErrorCorrection(GameManager.this.player.id, GameManager.this.player.position, GameManager.this.player.destination));
+                if(client != null) {
+                    client.send(DataSetter.setErrorCorrection(player.id, player.position, player.destination));
                 }
 
             }
@@ -147,12 +142,12 @@ public class GameManager extends Thread {
         }
 
         public void setMouse(int a, int b) {
-            this.x = a;
-            this.y = b;
+            x = a;
+            y = b;
         }
 
         public Vector2 getMouse() {
-            return new Vector2((float)this.x - GameManager.this.data.centerx, (float)this.y - GameManager.this.data.centery);
+            return new Vector2((float)x - data.centerx, (float)y - data.centery);
         }
     }
 }

@@ -14,6 +14,8 @@ public class Client extends Thread {
     public Socket client;
     GameManager manager;
 
+    public boolean connected = false;
+
     public Client(String s, int p, GameManager m){
         serverName = s;
         port = p;
@@ -31,17 +33,24 @@ public class Client extends Thread {
         }catch(IOException e) {
             e.printStackTrace();
         }
+        connected = true;
         Thread t = new ClientRecv();
         t.start();
     }
 
-    public void send(byte [] s){
-        try {
-            DataOutputStream out = new DataOutputStream(client.getOutputStream());
-            out.writeInt(s.length);
-            out.write(s);
-        }catch(IOException e){
-            e.printStackTrace();
+    public byte[] send(byte [] s){
+        if(connected) {
+            try {
+                DataOutputStream out = new DataOutputStream(client.getOutputStream());
+                out.writeInt(s.length);
+                out.write(s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return s;
+        }
+        else{
+            return s;
         }
     }
 
@@ -60,6 +69,7 @@ public class Client extends Thread {
                     }
 
                 } catch (IOException e) {
+                    connected = false;
                     break;
                 }
             }

@@ -13,9 +13,10 @@ import java.util.*;
 
 
 public class WowServer{
+
     private ServerSocket serverSocket;
     Game game;
-    public WowServer(int port, int n) throws IOException {
+    public WowServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         serverSocket.setSoTimeout(1000000);
     }
@@ -74,6 +75,7 @@ public class WowServer{
                 }catch(IOException e){
                     client.close();
                     game.removeClient(client);
+                    break;
                 }
             }
         }
@@ -82,9 +84,8 @@ public class WowServer{
 
     public static void main(String [] args){
         int port = 5055;
-        int numberOfPlayers = 2;
         try{
-            WowServer t = new WowServer(port, numberOfPlayers);
+            WowServer t = new WowServer(port);
             t.startGame();
         }catch(IOException e){
             e.printStackTrace();

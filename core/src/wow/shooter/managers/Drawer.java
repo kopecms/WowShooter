@@ -24,11 +24,15 @@ public class Drawer {
     public Drawer(DataStore d){
         data = d;
     }
+
     public void create(){
         batch = new SpriteBatch();;
         font = new BitmapFont();
         textures = new TextureManager();
         font.setColor(Color.RED);
+    }
+    public void drawStats(){
+        
     }
     public void drawBullets(){
         for(Bullet b: data.bullets){
@@ -55,17 +59,19 @@ public class Drawer {
             }
         }
         // rysowanie reszty
-        for(Enemy e: data.enemies){
-            currentTexture = textures.getTexture("player2");
-            if(e.name != null) {
-                font.draw(batch, e.name, data.centerx + e.position.x - data.player.position.x - currentTexture.getWidth()/2,
-                        data.centery + e.position.y - data.player.position.y + currentTexture.getHeight()/2 + namePosition);
-                font.draw(batch,Integer.toString(e.getHealth()),data.centerx + e.position.x - data.player.position.x - currentTexture.getWidth()/2,
-                        data.centery + e.position.y - data.player.position.y + currentTexture.getHeight()/2 + namePosition-15);
+        for(Enemy e: data.enemies) {
+            if (!e.dead) {
+                currentTexture = textures.getTexture("player2");
+                {
+                    font.draw(batch, e.name, data.centerx + e.position.x - data.player.position.x - currentTexture.getWidth() / 2,
+                            data.centery + e.position.y - data.player.position.y + currentTexture.getHeight() / 2 + namePosition);
+                    font.draw(batch, Integer.toString(e.getHealth()), data.centerx + e.position.x - data.player.position.x - currentTexture.getWidth() / 2,
+                            data.centery + e.position.y - data.player.position.y + currentTexture.getHeight() / 2 + namePosition - 15);
+                }
+                batch.draw(currentTexture,
+                        data.centerx + e.position.x - data.player.position.x - currentTexture.getWidth() / 2,
+                        data.centery + e.position.y - data.player.position.y - currentTexture.getHeight() / 2);
             }
-            batch.draw(currentTexture,
-                    data.centerx + e.position.x - data.player.position.x - currentTexture.getWidth()/2,
-                    data.centery + e.position.y - data.player.position.y - currentTexture.getHeight()/2);
         }
     }
     public void drawBoxes(){

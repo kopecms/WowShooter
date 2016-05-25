@@ -1,16 +1,12 @@
-package components;
+package functions;
 
 import com.badlogic.gdx.math.Vector2;
-import components.fun;
 import wow.shooter.entities.Box;
 
 
-import com.badlogic.gdx.math.Vector2;
-import components.fun;
 import enums.DataType;
 import enums.ObjectType;
 import java.nio.ByteBuffer;
-import wow.shooter.entities.Box;
 
 public class DataSetter {
     public DataSetter() {
