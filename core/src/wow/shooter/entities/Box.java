@@ -1,4 +1,4 @@
-package components.entities;
+package wow.shooter.entities;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 public class Box {
     public int id = 0;
     public Vector2 position;
-
     public Box(float x,float y){
         this.position = new Vector2(x,y);
     }

@@ -1,37 +1,24 @@
-package wow.shooter.logic.updating;
+package wow.shooter.logic;
 
-import components.entities.Box;
-import components.entities.Bullet;
-import components.entities.Enemy;
-import components.entities.Player;
-import components.data.GameData;
-import wow.shooter.logic.handlers.HandleOutput;
-
-import static components.data.functions.DataSetters.setHitData;
+import wow.shooter.entities.Box;
+import wow.shooter.entities.Bullet;
+import wow.shooter.entities.Enemy;
+import wow.shooter.entities.Player;
+import wow.shooter.managers.DataStore;
 
 /**
  * Created by kopec on 2016-03-25.
  */
-public class Bullets {
-    private GameData g = GameData.getInstance();
-    private HandleOutput o = HandleOutput.getInstance();
+public class BulletLogic  {
+    DataStore data;
     Player player;
     boolean remove = true;
     boolean hit = false;
 
-
-    public void update(float dt){
-        for(Bullet bullet: g.bullets) {
-            bullet.move(dt);
-            if(notNeeded(bullet)){
-                break;
-            }
-            if(gotHit(bullet)){
-                player.setHealth(player.getHealth()-10);
-                o.sendHit();
-                break;
-            }
-        }
+    public BulletLogic(DataStore data, Player player)
+    {
+        this.data = data;
+        this.player = player;
     }
     public boolean notNeeded(Bullet bullet)
     {
@@ -41,7 +28,7 @@ public class Bullets {
             if(bullet.dist(player.position)<500){
                 remove = false;
             }
-            for (Enemy enemy : g.enemies) {
+            for (Enemy enemy : data.enemies) {
                 // ktos trafiony
                 if(bullet.dist(enemy.position)<50 && bullet.my){
                     hit = true;
@@ -51,21 +38,21 @@ public class Bullets {
                     remove = false;
                 }
             }
-            for(Box box: g.boxes){
+            for(Box box: data.boxes){
                 if(bullet.dist(box.position)<50){
                     remove = true;
                     break;
                 }
             }
             if(remove || hit){
-                g.bullets.remove(bullet);
+                data.bullets.remove(bullet);
                 return true;
             }
         return false;
     }
     public boolean gotHit(Bullet bullet){
         if(bullet.dist(player.position)<50 && !bullet.my) {
-            g.bullets.remove(bullet);
+            data.bullets.remove(bullet);
             return true;
         }
         return false;

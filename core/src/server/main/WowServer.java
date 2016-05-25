@@ -5,51 +5,53 @@ package server.main;
  */
 
 import server.logic.Client;
-import server.logic.Room;
-import server.managers.RoomManager;
+import server.logic.Game;
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
 
 
-public class WowServer extends Thread{
+public class WowServer{
     private ServerSocket serverSocket;
-    private Vector<Client> clients = new Vector<Client>();
-    private RoomManager roomManager;
-    public WowServer(int port) throws IOException {
+    Game game;
+    public WowServer(int port, int n) throws IOException {
         serverSocket = new ServerSocket(port);
         serverSocket.setSoTimeout(1000000);
-
-        roomManager = new RoomManager(clients);
-        roomManager.start();
     }
-    public void run(){
-        System.out.println("WowShooter server started");
-        while(true){
+
+    public void startGame(){
+        System.out.println("Waiting for clients on port " +
+                serverSocket.getLocalPort() + " ...");
+
+        game = new Game();
+        game.start();
+        int num = 0;
+
+        while (true) {
             try {
-                Client client = waitForNewConnection();
-                clients.addElement(client);
-            } catch(SocketTimeoutException e){
-
-            } catch(IOException e){
-
+                game.addClient(waitForNewConnection(num++));
+            } catch (SocketTimeoutException s) {
+                System.out.println("Socket timed out!");
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
             }
         }
     }
 
-    public Client waitForNewConnection() throws SocketTimeoutException,IOException{
-        Socket clientSocket = serverSocket.accept();
-        Client client = new Client(clientSocket);
+    public Client waitForNewConnection(int num) throws SocketTimeoutException,IOException{
 
-        clients.addElement(client);
-        System.out.println("Just connected to " +
-                clientSocket.getRemoteSocketAddress());
+        Socket clientSocket = serverSocket.accept();
+        Client client = new Client(clientSocket, num);
         Thread t = new ClientHandler(client);
         t.start();
 
+        System.out.println("Just connected to " + clientSocket.getRemoteSocketAddress());
         return client;
     }
+
 
     public class ClientHandler extends Thread{
         private Client client;
@@ -70,21 +72,20 @@ public class WowServer extends Thread{
                     }
 
                 }catch(IOException e){
-
-                        e.printStackTrace();
-                        break;
-                    }
+                    client.close();
+                    game.removeClient(client);
                 }
             }
-
+        }
     }
 
 
     public static void main(String [] args){
         int port = 5055;
+        int numberOfPlayers = 2;
         try{
-            Thread t = new WowServer(port);
-            t.start();
+            WowServer t = new WowServer(port, numberOfPlayers);
+            t.startGame();
         }catch(IOException e){
             e.printStackTrace();
         }

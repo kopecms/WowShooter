@@ -1,4 +1,4 @@
-package wow.shooter.logic.handlers;
+package wow.shooter.logic;
 
 /**
  * Created by kopec on 2016-03-22.
@@ -6,7 +6,6 @@ package wow.shooter.logic.handlers;
 import java.net.*;
 import java.io.*;
 
-import components.data.Massage;
 import wow.shooter.managers.*;
 
 public class Client extends Thread {
@@ -15,30 +14,25 @@ public class Client extends Thread {
     public Socket client;
     GameManager manager;
 
-    public void create(String s,int p, GameManager m){
+    public Client(String s, int p, GameManager m){
         serverName = s;
         port = p;
         manager = m;
-
         connect();
 
-        // Watek odbierajacy dane od serwera i zapisujacy je w recv
-        Thread t = new ClientRecv();
-
-        t.start();
     }
 
     public void connect(){
-        try
-        {
-            System.out.println("Connecting to " + serverName +
-                    " on port " + port);
+        try {
+            System.out.println("Connecting to " + serverName + " on port " + port);
             client = new Socket(serverName, port);
-            System.out.println("Just connected to "
-                    + client.getRemoteSocketAddress());
+            System.out.println("Just connected to " + client.getRemoteSocketAddress());
+
         }catch(IOException e) {
             e.printStackTrace();
         }
+        Thread t = new ClientRecv();
+        t.start();
     }
 
     public void send(byte [] s){
@@ -54,19 +48,18 @@ public class Client extends Thread {
 
     public class ClientRecv extends Thread{
         public void run(){
-            byte[] bytes;
+            byte[] message;
             while(true) {
                 try {
                     DataInputStream in = new DataInputStream(client.getInputStream());
                     int length = in.readInt();
                     if(length>0) {
-                        bytes = new byte[length];
-                        in.readFully(bytes, 0, bytes.length); // read the message
-                        manager.handleData(new Massage(bytes));
+                        message = new byte[length];
+                        in.readFully(message, 0, message.length);
+                        manager.handleData(message);
                     }
 
                 } catch (IOException e) {
-                    e.printStackTrace();
                     break;
                 }
             }

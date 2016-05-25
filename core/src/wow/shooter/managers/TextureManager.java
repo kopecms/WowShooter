@@ -17,6 +17,7 @@ public class TextureManager {
         textures.put("gun", new Texture("core/assets/gun.png"));
         textures.put("bullet", new Texture("core/assets/bullet.png"));
         textures.put("box", new Texture("core/assets/box.png"));
+        textures.put("menuBox", new Texture("core/assets/MenuBox.png"));
     };
     public void dipose(){
         for(Texture texture: textures.values()){

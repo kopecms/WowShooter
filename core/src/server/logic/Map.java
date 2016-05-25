@@ -1,14 +1,16 @@
-package components.entities;
+package server.logic;
+
+import wow.shooter.entities.Box;
 
 import java.util.Vector;
 
 /**
  * Created by kopec on 2016-03-22.
  */
-public class World {
+public class Map {
     private Vector<Box> boxes = new Vector<Box>();
     private int mapSize = 7;
-    public World(){
+    public Map(){
         for(int i=-mapSize;i<=mapSize;i++){
             boxes.addElement(new Box(i*100,100*mapSize));
             boxes.addElement(new Box(i*100,-100*mapSize));

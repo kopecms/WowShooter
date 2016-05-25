@@ -3,120 +3,109 @@ package wow.shooter.main;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import wow.shooter.logic.SimpleMenuHandler;
+import wow.shooter.managers.DataStore;
+import wow.shooter.managers.Drawer;
 
-import com.badlogic.gdx.math.Vector2;
-import components.entities.Bullet;
-import components.entities.Player;
-import components.data.GameData;
-import wow.shooter.logic.controllers.Keyboard;
-import wow.shooter.logic.controllers.Mouse;
-import wow.shooter.drawing.Actors;
-import wow.shooter.drawing.Bullets;
-import wow.shooter.drawing.World;
-import wow.shooter.logic.handlers.Client;
-import wow.shooter.managers.*;
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import java.util.ConcurrentModificationException;
+import wow.shooter.logic.SimpleMenuHandler;
+import wow.shooter.managers.DataStore;
+import wow.shooter.managers.Drawer;
+import wow.shooter.managers.GameManager;
 
-import static components.data.functions.DataSetters.*;
+public class Game implements ApplicationListener, InputProcessor {
+    private DataStore data = new DataStore();
+    private GameManager manager;
+    private Drawer drawer;
+    private SimpleMenuHandler menu;
 
-public class Game implements ApplicationListener , InputProcessor {
+    public Game() {
+        this.manager = new GameManager(this.data);
+        this.drawer = new Drawer(this.data);
+        this.menu = new SimpleMenuHandler(this.manager);
+    }
 
-	public GameData g = new GameData();
-	public GameManager manager =  new GameManager();
+    public void create() {
+        this.data.setSreenSize((float) Gdx.graphics.getWidth(), (float) Gdx.graphics.getHeight());
+        this.drawer.create();
+        Gdx.input.setInputProcessor(this);
+    }
 
-	private Actors actors = new Actors();
-	private World world = new World();
-	private Bullets bullets = new Bullets();
+    public void dispose() {
+        this.drawer.dispose();
+        this.manager.close();
+    }
 
-	private Mouse mouse = new Mouse();
-	private Keyboard keyboard = new Keyboard();
+    public void render() {
 
-	@Override
-	public void create() {
-		g.screenWidth = Gdx.graphics.getWidth();
-		g.screenHeight = Gdx.graphics.getHeight();
-		g.centerx = g.screenWidth / 2;
-		g.centery = g.screenHeight / 2;
-		g.mouse = mouse;
-		manager.start();
-		Gdx.input.setInputProcessor(this);
-	}
-	@Override
-	public void dispose() {
-		g.batch.dispose();
-		g.font.dispose();
-		g.textures.dipose();
-		manager.close();
-	}
 
-	@Override
-	public void render() {
-		manager.updateGame(Gdx.graphics.getDeltaTime());
+        try {
+            this.manager.updateGame(Gdx.graphics.getDeltaTime());
+            Gdx.gl.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+            Gdx.gl.glClear(16384);
+            this.drawer.batch.begin();
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		g.batch.begin();
+            this.drawer.drawPlayers();
+            this.drawer.drawBoxes();
+            this.drawer.drawBullets();
 
-		actors.render();
-		world.render();
-		bullets.render();
+            if (!this.menu.connected) {
+                // this.menu.getData();
+                //this.drawer.drawMenuBox();
+            }
+            this.drawer.batch.end();
+        } catch (ConcurrentModificationException var2) {
+            ;
+        }
 
-		g.batch.end();
-	}
+    }
 
-	@Override
-	public void resize(int width, int height) {}
+    public void resize(int width, int height) {
+    }
 
-	@Override
-	public void pause() {}
+    public void pause() {
+    }
 
-	@Override
-	public void resume() {}
+    public void resume() {
+    }
 
-	@Override
-	public boolean keyDown(int keycode) {
-		keyboard.keyDown(keycode);
-		return true;
-	}
+    public boolean keyDown(int keycode) {
+        System.out.println(keycode);
+        this.manager.shootEvent();
+        return true;
+    }
 
-	@Override
-	public boolean keyUp(int keycode) {
-		return false;
-	}
+    public boolean keyUp(int keycode) {
+        return false;
+    }
 
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
+    public boolean keyTyped(char character) {
+        return false;
+    }
 
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		mouse.getTouch(screenX,screenY);
-		return false;
-	}
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        this.manager.touchDownEvent(screenX, Gdx.graphics.getHeight() - screenY);
+        return false;
+    }
 
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
 
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
 
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		mouse.getMove(screenX, screenY);
-		return false;
-	}
+    public boolean mouseMoved(int screenX, int screenY) {
+        this.manager.moveEvent(screenX, Gdx.graphics.getHeight() - screenY);
+        return false;
+    }
 
-	@Override
-	public boolean scrolled(int amount) {
-		return false;
-	}
+    public boolean scrolled(int amount) {
+        return false;
+    }
+
 }

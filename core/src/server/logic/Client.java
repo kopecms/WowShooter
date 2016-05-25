@@ -1,5 +1,7 @@
 package server.logic;
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -12,14 +14,31 @@ import java.util.Queue;
  */
 public class Client {
     public Socket socket;
-    private static int couter = 0;
-    private int number;
-    private Queue<byte []> recvFromClient = new LinkedList<>();
+    public int number;
 
-    public Client (Socket s){
-        couter ++;
-        socket = s;
-        number = couter;
+    private Queue<byte []> recvFromClient = new LinkedList<byte []>();
+
+    public String name = "";
+    public int health = 0;
+    public Vector2 position = new Vector2(0,0);
+    public int score = 0;
+
+    public Client (Socket socket, int number){
+        this.socket = socket;
+        this.number = number;
+    }
+
+    public void close(){
+        try {
+            socket.close();
+        } catch (IOException e){}
+    }
+
+    public byte[] poll(){
+        return recvFromClient.poll();
+    }
+    public boolean peek(){
+        return recvFromClient.peek() != null;
     }
     public void send(byte [] s){
         try {
@@ -31,20 +50,6 @@ public class Client {
         }
     }
 
-    public int getNumber() { return number; }
-
-    public boolean peek(){
-        if(recvFromClient.peek() != null){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    public byte[] poll(){
-        return recvFromClient.poll();
-    }
     public void offer(byte [] recv){
         recvFromClient.offer(recv);
     }
