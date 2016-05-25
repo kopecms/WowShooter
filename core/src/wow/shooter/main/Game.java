@@ -46,17 +46,18 @@ public class Game implements ApplicationListener, InputProcessor {
             this.manager.updateGame(Gdx.graphics.getDeltaTime());
             Gdx.gl.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
             Gdx.gl.glClear(16384);
-            this.drawer.batch.begin();
+            drawer.batch.begin();
 
-            this.drawer.drawPlayers();
-            this.drawer.drawBoxes();
-            this.drawer.drawBullets();
+            drawer.drawPlayers();
+            drawer.drawBoxes();
+            drawer.drawBullets();
+            drawer.drawStats();
 
-            if (!this.menu.connected) {
+            if (!menu.connected) {
                 // this.menu.drawTextDataDialog();
                 //this.drawer.drawMenuBox();
             }
-            this.drawer.batch.end();
+            drawer.batch.end();
         } catch (ConcurrentModificationException var2) {
             ;
         }
@@ -73,7 +74,6 @@ public class Game implements ApplicationListener, InputProcessor {
     }
 
     public boolean keyDown(int keycode) {
-        System.out.println(keycode);
         this.manager.shootEvent();
         return true;
     }

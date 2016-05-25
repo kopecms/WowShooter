@@ -90,9 +90,20 @@ public class DataHandler {
         }
 
     }
-    public static void disconnection(byte[] recv, Vector<Enemy> enemies){
-        for(Enemy enemy:enemies){
-
-        }
+    public static void disconnection(byte[] recv, Vector<Enemy> enemies) {
+        for (Enemy enemy : enemies)
+            if (enemy.id == recv[1]) {
+                enemies.remove(enemy);
+                return;
+            }
     }
+
+    public static void addScore(byte[] recv, Player player, Vector<Enemy> enemies){
+        player.score += 100;
+        for (Enemy enemy : enemies)
+            if (enemy.id != recv[1])
+                enemy.score += 100;
+    }
+
+
 }

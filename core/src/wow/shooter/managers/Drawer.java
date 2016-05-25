@@ -32,7 +32,12 @@ public class Drawer {
         font.setColor(Color.RED);
     }
     public void drawStats(){
-        
+        font.draw(batch, data.player.name+" "+data.player.score,20,data.screenH-10);
+        int i = 20;
+        for(Enemy enemy: data.enemies){
+            font.draw(batch, enemy.name+" "+enemy.score,20,data.screenH-10-i);
+            i += 20;
+        }
     }
     public void drawBullets(){
         for(Bullet b: data.bullets){

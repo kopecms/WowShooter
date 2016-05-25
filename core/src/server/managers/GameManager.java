@@ -39,6 +39,8 @@ public class GameManager {
                     case GETSTATE:
                         sendGameState(client);
                         break;
+                    case KILL:
+                        sendFurther(client,recv);
                     case NAME:
                         client.name = fun.stringFromBytes(recv,1,recv.length-1);
                         sendFurther(client, DataSetter.setNameData(client.number, Arrays.copyOfRange(recv, 1, recv.length)));

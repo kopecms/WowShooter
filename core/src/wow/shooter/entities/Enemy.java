@@ -10,7 +10,10 @@ public class Enemy {
     public int id;
     public boolean dead = false;
 
+    public int score = 0;
+
     private int health = 100;
+
     private float speed = 300;
 
     public Vector2 position = new Vector2();

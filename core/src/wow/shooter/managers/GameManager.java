@@ -1,6 +1,7 @@
 package wow.shooter.managers;
 import com.badlogic.gdx.math.Vector2;
 import wow.shooter.entities.Bullet;
+import wow.shooter.entities.Enemy;
 import wow.shooter.entities.Player;
 import wow.shooter.logic.Client;
 import wow.shooter.logic.Update;
@@ -32,6 +33,7 @@ public class GameManager extends Thread {
     public GameManager(DataStore d) {
 
         data = d;
+        data.player = player;
         client = new Client("localhost", 5055, this);
         client.send(new byte[]{(byte)DataType.GETSTATE.getId()});
         client.send(DataSetter.setNameData("Kopciu"));
@@ -68,11 +70,17 @@ public class GameManager extends Thread {
 
     public void updateGame(float dt) {
         try {
-            Update.updatePlayer(dt, player);
+            if(Update.updatePlayer(dt, player)) {
+                client.send(new byte[]{(byte) DataType.KILL.getId(), (byte) player.id});
+                for(Enemy enemy: data.enemies)
+                    enemy.score += 100;
+            }
             Update.updateEnemies(dt, data.enemies);
+
             if(Update.collisions(player, data.boxes, data.enemies))
                 client.send(setCollisionData(player.id, new Vector2(player.position.x + player.velocity.y,
                         player.position.y - player.velocity.x)));
+
             if(Update.updateBullets(dt,player, data.enemies, data.boxes, data.bullets))
                 client.send(setHitData(player.id,player.getHealth()));
         } catch (ConcurrentModificationException var3) {
@@ -85,34 +93,27 @@ public class GameManager extends Thread {
         DataType dataType = DataType.fromInt(recv[0]);
         switch(dataType) {
             case NAME:
-                DataHandler.handleName(recv, data.enemies);
-                break;
+                DataHandler.handleName(recv, data.enemies); break;
             case LAGERRORCORRECTION:
-                DataHandler.handleLag(recv, data.enemies);
-                break;
+                DataHandler.handleLag(recv, data.enemies); break;
             case COLLISION:
-                DataHandler.handleCollison(recv, data.enemies);
-                break;
+                DataHandler.handleCollison(recv, data.enemies); break;
             case HIT:
-                DataHandler.handleHit(recv, data.enemies, player);
-                break;
+                DataHandler.handleHit(recv, data.enemies, player); break;
             case SHOOT:
-                DataHandler.handleShoot(recv, data.enemies, data.bullets);
-                break;
+                DataHandler.handleShoot(recv, data.enemies, data.bullets); break;
             case POSITION:
-                DataHandler.handlePosition(recv, player);
-                break;
+                DataHandler.handlePosition(recv, player); break;
             case MOVE:
-                DataHandler.handleMove(recv, data.enemies);
-                break;
+                DataHandler.handleMove(recv, data.enemies); break;
             case OBJECT:
-                DataHandler.handleObject(recv, data.enemies, data.boxes);
-                break;
+                DataHandler.handleObject(recv, data.enemies, data.boxes); break;
             case ID:
-                player.id = recv[1];
-                break;
+                player.id = recv[1]; break;
             case DISCONNECTED:
-                DataHandler.disconnection(recv, data.enemies);
+                DataHandler.disconnection(recv, data.enemies); break;
+            case KILL:
+                DataHandler.addScore(recv, player, data.enemies); break;
             case NONE:
         }
         return dataType;
@@ -131,19 +132,15 @@ public class GameManager extends Thread {
                 }
 
             }
-        }, 0L, 1000L);
+        }, 0, 1000);
     }
 
     private class Mouse {
         int x;
         int y;
 
-        private Mouse() {
-        }
-
         public void setMouse(int a, int b) {
-            x = a;
-            y = b;
+            x = a;y = b;
         }
 
         public Vector2 getMouse() {

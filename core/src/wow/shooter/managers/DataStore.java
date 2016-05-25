@@ -17,12 +17,14 @@ public class DataStore {
     public Vector<Box> boxes = new Vector<Box>();
     public Vector<Bullet> bullets = new Vector<Bullet>();
 
+    public int screenH;
     public float centerx;
     public float centery;
 
     public Player player;
 
     public void setSreenSize(float x, float y){
+        screenH = (int)y;
         centerx = x / 2;
         centery = y / 2;
     }

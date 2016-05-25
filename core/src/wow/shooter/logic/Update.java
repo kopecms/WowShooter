@@ -15,21 +15,22 @@ import java.util.Vector;
 public class Update {
     private static int objectsSize = 100;
 
-    public static void updatePlayer(float dt, Player player){
+    public static boolean updatePlayer(float dt, Player player){
         if(!player.dead)
             player.move(dt);
-        else
-            return;
-        if(player.getHealth() == 0)
-            player.dead = true;
 
+        if(player.getHealth() == 0 && !player.dead) {
+            player.dead = true;
+            return true;
+        }
+        return false;
     }
 
     public static void updateEnemies(float dt, Vector<Enemy> enemies) throws ConcurrentModificationException{
         for(Enemy enemy: enemies){
             if(!enemy.dead)
                 enemy.move(dt);
-            if(enemy.getHealth() == 0)
+            if(enemy.getHealth() == 0 && !enemy.dead)
                 enemy.dead = true;
         }
     }

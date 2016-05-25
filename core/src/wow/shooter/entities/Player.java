@@ -12,6 +12,8 @@ public class Player {
     public int id = 0;
     public boolean dead = false;
 
+    public int score = 0;
+
     private int health;
 
     private float speed = 300;
