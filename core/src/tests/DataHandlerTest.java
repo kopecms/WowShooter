@@ -15,8 +15,8 @@ import static org.junit.Assert.*;
  * Created by kopec on 2016-05-25.
  */
 public class DataHandlerTest {
-    Vector<Enemy> enemies = new Vector<>();
-    Vector<Box> boxes = new Vector<>();
+    Vector<Enemy> enemies = new Vector<Enemy>();
+    Vector<Box> boxes = new Vector<Box>();
     Box box = new Box(0, 0);
     Enemy enemy = new Enemy();
     Player player = new Player(1, 0, 0);

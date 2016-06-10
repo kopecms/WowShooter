@@ -26,7 +26,7 @@ public class GameManager extends Thread {
 
     public String playerName = "";
     public String serverAddr = "localhost";
-    public String port = "5055";
+    public String port = "50055";
 
     public boolean connected = false;
     Timer t = new Timer();

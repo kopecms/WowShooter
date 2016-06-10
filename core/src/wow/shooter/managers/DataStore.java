@@ -14,9 +14,9 @@ import java.util.Vector;
  */
 
 public class DataStore {
-    public Vector<Enemy> enemies = new Vector<>();
-    public Vector<Box> boxes = new Vector<>();
-    public Vector<Bullet> bullets = new Vector<>();
+    public Vector<Enemy> enemies = new Vector<Enemy>();
+    public Vector<Box> boxes = new Vector<Box>();
+    public Vector<Bullet> bullets = new Vector<Bullet>();
 
     public int screenH;
     public int screenW;
@@ -26,9 +26,9 @@ public class DataStore {
     public Player player;
     public SimpleMenuHandler menu;
     public void clear(){
-        enemies = new Vector<>();
-        boxes = new Vector<>();
-        bullets = new Vector<>();
+        enemies = new Vector<Enemy>();
+        boxes = new Vector<Box>();
+        bullets = new Vector<Bullet>();
     }
 
 

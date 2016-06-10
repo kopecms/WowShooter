@@ -17,7 +17,7 @@ public class Client {
     public Socket socket;
     public int number;
 
-    private Queue<byte []> recvFromClient = new LinkedList<>();
+    private Queue<byte []> recvFromClient = new LinkedList<byte []>();
 
     public String name = "";
     public Vector2 position = new Vector2(0,0);

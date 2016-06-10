@@ -17,11 +17,11 @@ import static org.junit.Assert.*;
  */
 public class UpdateTest {
     Player player = new Player(0,0,0);
-    Vector<Enemy> enemies = new Vector<>();
+    Vector<Enemy> enemies = new Vector<Enemy>();
     Enemy enemy = new Enemy();
-    Vector<Bullet> bullets = new Vector<>();
+    Vector<Bullet> bullets = new Vector<Bullet>();
     Bullet bullet = new Bullet(new Vector2(0,0),new Vector2(1,1));
-    Vector<Box> boxes = new Vector<>();
+    Vector<Box> boxes = new Vector<Box>();
     Box box = new Box(100,100);
 
     public UpdateTest(){
