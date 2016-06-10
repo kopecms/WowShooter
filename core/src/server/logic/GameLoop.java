@@ -8,11 +8,11 @@ import java.util.Vector;
 /**
  * Created by kopec on 2016-03-22.
  */
-public class Game extends Thread{
+public class GameLoop extends Thread{
     private Vector<Client> clients = new Vector<Client>();
-    private GameManager manager = new GameManager(clients);
+    public GameManager manager = new GameManager(clients);
 
-    public Game(){
+    public GameLoop(){
     }
     public void addClient(Client client){
         clients.addElement(client);

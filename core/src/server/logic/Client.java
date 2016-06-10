@@ -1,6 +1,7 @@
 package server.logic;
 
 import com.badlogic.gdx.math.Vector2;
+import enums.DataType;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,11 +17,10 @@ public class Client {
     public Socket socket;
     public int number;
 
-    private Queue<byte []> recvFromClient = new LinkedList<byte []>();
+    private Queue<byte []> recvFromClient = new LinkedList<>();
 
     public String name = "";
     public Vector2 position = new Vector2(0,0);
-    public int score = 0;
 
     public Client (Socket socket, int number){
         this.socket = socket;

@@ -13,9 +13,7 @@ public class Player {
     public boolean dead = false;
 
     public int score = 0;
-
     private int health;
-
     private float speed = 300;
 
     public Vector2 position = new Vector2();

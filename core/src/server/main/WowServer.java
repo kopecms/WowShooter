@@ -4,18 +4,18 @@ package server.main;
  * Created by kopec on 2016-03-22.
  */
 
+import enums.DataType;
 import server.logic.Client;
-import server.logic.Game;
+import server.logic.GameLoop;
 
 import java.net.*;
 import java.io.*;
-import java.util.*;
 
 
 public class WowServer{
 
     private ServerSocket serverSocket;
-    Game game;
+    GameLoop game;
     public WowServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         serverSocket.setSoTimeout(1000000);
@@ -25,7 +25,7 @@ public class WowServer{
         System.out.println("Waiting for clients on port " +
                 serverSocket.getLocalPort() + " ...");
 
-        game = new Game();
+        game = new GameLoop();
         game.start();
         int num = 0;
 
@@ -42,7 +42,7 @@ public class WowServer{
         }
     }
 
-    public Client waitForNewConnection(int num) throws SocketTimeoutException,IOException{
+    public Client waitForNewConnection(int num) throws IOException{
 
         Socket clientSocket = serverSocket.accept();
         Client client = new Client(clientSocket, num);
@@ -68,12 +68,11 @@ public class WowServer{
                     if(length>0) {
                         message = new byte[length];
                         in.readFully(message, 0, message.length);
-
                         client.offer(message);
                     }
-
                 }catch(IOException e){
                     client.close();
+                    game.manager.sendFurther(client,new byte[]{(byte) DataType.DISCONNECTED.getId(), (byte)client.number});
                     game.removeClient(client);
                     break;
                 }
@@ -83,7 +82,13 @@ public class WowServer{
 
 
     public static void main(String [] args){
-        int port = 5055;
+        int port;
+        if(args.length == 0)
+            port = 5055;
+        else if(args.length == 1)
+            port = Integer.parseInt(args[0]);
+        else
+            return;
         try{
             WowServer t = new WowServer(port);
             t.startGame();

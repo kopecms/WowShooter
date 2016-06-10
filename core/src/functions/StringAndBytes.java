@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * Created by kopec on 2016-03-22.
  */
-public class fun {
+public class StringAndBytes {
     public static byte[] concat(byte[] a, byte[] b){
         int aLen = a.length;
         int bLen = b.length;

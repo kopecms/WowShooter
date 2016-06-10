@@ -18,10 +18,10 @@ public class DataSetter {
         byte[] posY = ByteBuffer.allocate(4).putInt((int)position.y).array();
         byte[] desX = ByteBuffer.allocate(4).putInt((int)destination.x).array();
         byte[] desY = ByteBuffer.allocate(4).putInt((int)destination.y).array();
-        byte[] des = fun.concat(desX, desY);
-        byte[] pos = fun.concat(posX, posY);
-        byte[] data = fun.concat(dataType, pos);
-        byte[] dataToSend = fun.concat(data, des);
+        byte[] des = StringAndBytes.concat(desX, desY);
+        byte[] pos = StringAndBytes.concat(posX, posY);
+        byte[] data = StringAndBytes.concat(dataType, pos);
+        byte[] dataToSend = StringAndBytes.concat(data, des);
         return dataToSend;
     }
 
@@ -29,15 +29,15 @@ public class DataSetter {
         byte[] dataType = new byte[]{(byte)DataType.COLLISION.getId(), (byte)id};
         byte[] posX = ByteBuffer.allocate(4).putInt((int)newDestination.x).array();
         byte[] posY = ByteBuffer.allocate(4).putInt((int)newDestination.y).array();
-        byte[] destination = fun.concat(posX, posY);
-        byte[] dataToSend = fun.concat(dataType, destination);
+        byte[] destination = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, destination);
         return dataToSend;
     }
 
     public static byte[] setHitData(int id, int health) {
         byte[] dataType = new byte[]{(byte)DataType.HIT.getId(), (byte)id};
         byte[] healthBytes = ByteBuffer.allocate(4).putInt(health).array();
-        byte[] dataToSend = fun.concat(dataType, healthBytes);
+        byte[] dataToSend = StringAndBytes.concat(dataType, healthBytes);
         return dataToSend;
     }
 
@@ -45,14 +45,14 @@ public class DataSetter {
         byte[] dataType = new byte[]{(byte)DataType.SHOOT.getId()};
         byte[] posX = ByteBuffer.allocate(4).putInt((int)velocity.x).array();
         byte[] posY = ByteBuffer.allocate(4).putInt((int)velocity.y).array();
-        byte[] velocityBytes = fun.concat(posX, posY);
-        byte[] dataToSend = fun.concat(dataType, velocityBytes);
+        byte[] velocityBytes = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, velocityBytes);
         return dataToSend;
     }
 
     public static byte[] setBulletData(int id, byte[] velocity) {
         byte[] dataType = new byte[]{(byte)DataType.SHOOT.getId(), (byte)id};
-        byte[] dataToSend = fun.concat(dataType, velocity);
+        byte[] dataToSend = StringAndBytes.concat(dataType, velocity);
         return dataToSend;
     }
 
@@ -60,14 +60,14 @@ public class DataSetter {
         byte[] dataType = new byte[]{(byte)DataType.MOVE.getId()};
         byte[] posX = ByteBuffer.allocate(4).putInt((int)x).array();
         byte[] posY = ByteBuffer.allocate(4).putInt((int)y).array();
-        byte[] destination = fun.concat(posX, posY);
-        byte[] dataToSend = fun.concat(dataType, destination);
+        byte[] destination = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, destination);
         return dataToSend;
     }
 
     public static byte[] setDestinationData(int id, byte[] destination) {
         byte[] dataType = new byte[]{(byte)DataType.MOVE.getId(), (byte)id};
-        byte[] dataToSend = fun.concat(dataType, destination);
+        byte[] dataToSend = StringAndBytes.concat(dataType, destination);
         return dataToSend;
     }
 
@@ -80,8 +80,8 @@ public class DataSetter {
         byte[] dataType = new byte[]{(byte)DataType.OBJECT.getId(), (byte)ObjectType.ENEMY.getId(), (byte)id};
         byte[] posX = ByteBuffer.allocate(4).putInt(x).array();
         byte[] posY = ByteBuffer.allocate(4).putInt(y).array();
-        byte[] position = fun.concat(posX, posY);
-        byte[] dataToSend = fun.concat(dataType, position);
+        byte[] position = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, position);
         return dataToSend;
     }
 
@@ -89,8 +89,8 @@ public class DataSetter {
         byte[] dataType = new byte[]{(byte)DataType.OBJECT.getId(), (byte)ObjectType.BOX.getId(), (byte)box.id};
         byte[] posX = ByteBuffer.allocate(4).putInt((int)box.position.x).array();
         byte[] posY = ByteBuffer.allocate(4).putInt((int)box.position.y).array();
-        byte[] position = fun.concat(posX, posY);
-        byte[] dataToSend = fun.concat(dataType, position);
+        byte[] position = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, position);
         return dataToSend;
     }
 
@@ -98,31 +98,28 @@ public class DataSetter {
         byte[] dataType = new byte[]{(byte)DataType.POSITION.getId()};
         byte[] posX = ByteBuffer.allocate(4).putInt(x).array();
         byte[] posY = ByteBuffer.allocate(4).putInt(y).array();
-        byte[] position = fun.concat(posX, posY);
-        byte[] dataToSend = fun.concat(dataType, position);
+        byte[] position = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, position);
+        return dataToSend;
+    }
+    public static byte[] resetPositionData(int id, int x, int y) {
+        byte[] dataType = new byte[]{(byte)DataType.RESET.getId(), (byte) id};
+        byte[] posX = ByteBuffer.allocate(4).putInt(x).array();
+        byte[] posY = ByteBuffer.allocate(4).putInt(y).array();
+        byte[] position = StringAndBytes.concat(posX, posY);
+        byte[] dataToSend = StringAndBytes.concat(dataType, position);
         return dataToSend;
     }
 
     public static byte[] setNameData(String name) {
         byte[] dataType = new byte[]{(byte)DataType.NAME.getId()};
-        byte[] dataToSend = fun.concat(dataType, name.getBytes());
+        byte[] dataToSend = StringAndBytes.concat(dataType, name.getBytes());
         return dataToSend;
     }
 
     public static byte[] setNameData(int id, byte[] name) {
         byte[] dataType = new byte[]{(byte)DataType.NAME.getId(), (byte)id};
-        byte[] dataToSend = fun.concat(dataType, name);
-        return dataToSend;
-    }
-
-    public static byte[] playerOut(int id) {
-        byte[] dataToSend = new byte[]{(byte)DataType.OUT.getId(), (byte)id};
-        return dataToSend;
-    }
-
-    public static byte[] createMsg(int id, byte[] msg) {
-        byte[] dataType = new byte[]{(byte)DataType.MSG.getId(), (byte)id};
-        byte[] dataToSend = fun.concat(dataType, msg);
+        byte[] dataToSend = StringAndBytes.concat(dataType, name);
         return dataToSend;
     }
 }

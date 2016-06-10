@@ -6,6 +6,7 @@ package wow.shooter.logic;
 import java.net.*;
 import java.io.*;
 
+import enums.DataType;
 import wow.shooter.managers.*;
 
 public class Client extends Thread {
@@ -16,26 +17,29 @@ public class Client extends Thread {
 
     public boolean connected = false;
 
-    public Client(String s, int p, GameManager m){
+    public boolean connect(String s, int p, GameManager m){
         serverName = s;
         port = p;
         manager = m;
-        connect();
-
-    }
-
-    public void connect(){
         try {
-            System.out.println("Connecting to " + serverName + " on port " + port);
             client = new Socket(serverName, port);
-            System.out.println("Just connected to " + client.getRemoteSocketAddress());
-
         }catch(IOException e) {
-            e.printStackTrace();
+            return false;
         }
         connected = true;
         Thread t = new ClientRecv();
         t.start();
+        return true;
+    }
+    public void disconnect(){
+        send(new byte []{(byte)DataType.DISCONNECTED.getId()});
+        connected = false;
+        try {
+            if(client != null)
+                client.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public byte[] send(byte [] s){
@@ -45,7 +49,7 @@ public class Client extends Thread {
                 out.writeInt(s.length);
                 out.write(s);
             } catch (IOException e) {
-                e.printStackTrace();
+                    manager.handleConnection();
             }
             return s;
         }
@@ -67,9 +71,8 @@ public class Client extends Thread {
                         in.readFully(message, 0, message.length);
                         manager.handleData(message);
                     }
-
                 } catch (IOException e) {
-                    connected = false;
+                    manager.handleConnection();
                     break;
                 }
             }

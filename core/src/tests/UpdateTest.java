@@ -9,7 +9,7 @@ import wow.shooter.entities.Player;
 
 import java.util.Vector;
 
-import static wow.shooter.logic.Update.*;
+import static wow.shooter.logic.UpdateGame.*;
 import static org.junit.Assert.*;
 
 /**
@@ -32,7 +32,7 @@ public class UpdateTest {
     @Test
     public void updatePlayerPositionWhenAlive() throws Exception {
         player.destination = new Vector2(1,1);
-        updatePlayer(1,player);
+        updatePlayer(1,player,enemies);
         assertTrue(player.position.equals(new Vector2(1,1)));
     }
 
@@ -41,7 +41,7 @@ public class UpdateTest {
         player.dead = true;
         player.destination = new Vector2(1,1);
 
-        updatePlayer(1,player);
+        updatePlayer(1,player,enemies);
         assertTrue(player.position.equals(new Vector2(0,0)));
     }
 

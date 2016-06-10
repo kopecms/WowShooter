@@ -12,15 +12,17 @@ import java.util.Vector;
 /**
  * Created by kopec on 2016-05-17.
  */
-public class Update {
+public class UpdateGame {
     private static int objectsSize = 100;
 
-    public static boolean updatePlayer(float dt, Player player){
+    public static boolean updatePlayer(float dt, Player player, Vector<Enemy> enemies){
         if(!player.dead)
             player.move(dt);
 
         if(player.getHealth() == 0 && !player.dead) {
             player.dead = true;
+            for(Enemy enemy: enemies)
+                enemy.score += 100;
             return true;
         }
         return false;
@@ -76,20 +78,17 @@ public class Update {
     {
         if(bullet.dist(player.position)>700)
             return true;
-
         for (Enemy enemy : enemies)
-            if(bullet.dist(enemy.position)<50 && bullet.my){
+            if(bullet.dist(enemy.position)<50 && bullet.my && !enemy.dead){
                 return true;
             }
-
         for(Box box: boxes)
             if(bullet.dist(box.position)<50)
                 return true;
-
         return false;
     }
     private static boolean gotHit(Bullet bullet, Player player){
-        if(bullet.dist(player.position)<50 && !bullet.my)
+        if(bullet.dist(player.position)<50 && !bullet.my && !player.dead)
             return true;
         return false;
     }

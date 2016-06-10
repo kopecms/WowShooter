@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  */
 public class PlayerTest {
     Player player = new Player(0,0,0);
-
+    public PlayerTest(){}
     @Test
     public void setHealth() throws Exception {
         player.setHealth(50);
@@ -23,8 +23,10 @@ public class PlayerTest {
         assertEquals(player.getHealth(),100);
     }
 
+    @Test
     public void setLessThanZeroHealth() throws Exception {
         player.setHealth(-100);
         assertEquals(player.getHealth(),100);
     }
+
 }

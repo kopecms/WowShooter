@@ -23,43 +23,39 @@ public class Game implements ApplicationListener, InputProcessor {
     private SimpleMenuHandler menu;
 
     public Game() {
-        this.manager = new GameManager(data);
-        this.drawer = new Drawer(data);
-        this.menu = new SimpleMenuHandler(manager);
+        manager = new GameManager(data);
+        drawer = new Drawer(data);
+        menu = new SimpleMenuHandler(manager);
+        data.menu = menu;
     }
 
     public void create() {
-        this.data.setSreenSize((float) Gdx.graphics.getWidth(), (float) Gdx.graphics.getHeight());
-        this.drawer.create();
+        data.setScreenSize((float) Gdx.graphics.getWidth(), (float) Gdx.graphics.getHeight());
+        drawer.create();
         Gdx.input.setInputProcessor(this);
     }
 
     public void dispose() {
-        this.drawer.dispose();
-        this.manager.close();
+        drawer.dispose();
+        manager.close();
     }
 
     public void render() {
-
-
         try {
-            this.manager.updateGame(Gdx.graphics.getDeltaTime());
+            manager.updateGame(Gdx.graphics.getDeltaTime());
             Gdx.gl.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
             Gdx.gl.glClear(16384);
             drawer.batch.begin();
 
-            drawer.drawPlayers();
-            drawer.drawBoxes();
-            drawer.drawBullets();
-            drawer.drawStats();
+            drawer.drawGame();
 
-            if (!menu.connected) {
-                // this.menu.drawTextDataDialog();
-                //this.drawer.drawMenuBox();
+            drawer.drawConnectionState(manager.connected);
+            if (!manager.connected) {
+                menu.drawTextDataDialogs();
             }
             drawer.batch.end();
         } catch (ConcurrentModificationException var2) {
-            ;
+            drawer.batch.end();
         }
 
     }
@@ -74,7 +70,7 @@ public class Game implements ApplicationListener, InputProcessor {
     }
 
     public boolean keyDown(int keycode) {
-        this.manager.shootEvent();
+        manager.handleKeyboardInput(keycode);
         return true;
     }
 
@@ -87,7 +83,7 @@ public class Game implements ApplicationListener, InputProcessor {
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        this.manager.touchDownEvent(screenX, Gdx.graphics.getHeight() - screenY);
+        manager.touchDownEvent(screenX, Gdx.graphics.getHeight() - screenY);
         return false;
     }
 
@@ -100,7 +96,7 @@ public class Game implements ApplicationListener, InputProcessor {
     }
 
     public boolean mouseMoved(int screenX, int screenY) {
-        this.manager.moveEvent(screenX, Gdx.graphics.getHeight() - screenY);
+        manager.mouseEvent(screenX, Gdx.graphics.getHeight() - screenY);
         return false;
     }
 

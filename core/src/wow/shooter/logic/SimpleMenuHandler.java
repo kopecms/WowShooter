@@ -31,19 +31,31 @@ public class SimpleMenuHandler implements Input.TextInputListener {
                 Gdx.input.getTextInput(this, "Username:", manager.playerName, "");
                 nick = true;
             } else if (!serverAddr) {
-                Gdx.input.getTextInput(this, "Username:", manager.serverAddr, "np. localhost");
+                manager.playerName = inputedText;
+                Gdx.input.getTextInput(this, "Server address:", manager.serverAddr, "");
                 serverAddr = true;
             } else if (!port) {
-                Gdx.input.getTextInput(this, "Username:", manager.port, "np. 5055");
+                manager.serverAddr = inputedText;
+                Gdx.input.getTextInput(this, "Server port:", manager.port, "");
                 port = true;
+            } else if(port && manager.connected == false){
+                manager.port = inputedText;
                 connected = true;
+                manager.createConnection();
+                reset();
             }
         }
     }
+    public void reset(){
+        getNext = true;
+        serverAddr = false;
+        port = false;
+        nick = false;
+    }
+
 
     @Override
     public void input(String text) {
-        System.out.print(text);
         inputedText = text;
         getNext = true;
     }

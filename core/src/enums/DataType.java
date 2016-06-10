@@ -20,6 +20,8 @@ public enum DataType {
     DISCONNECTED(14),
     COLLISION(15),
     LAGERRORCORRECTION(16),
+    RESET(17),
+
     NONE(-1);
 
     private final int id;

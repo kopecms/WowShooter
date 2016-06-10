@@ -1,8 +1,7 @@
 package server.managers;
 
-import functions.fun;
+import functions.StringAndBytes;
 import server.logic.Client;
-import server.logic.Map;
 import wow.shooter.entities.Box;
 
 import java.util.Arrays;
@@ -12,7 +11,7 @@ import enums.DataType;
 
 public class GameManager {
     private Vector<Client> clients;
-    Map map = new Map();
+    MapManager map = new MapManager();
 
     public GameManager(Vector<Client> c) {
         clients = c;
@@ -28,23 +27,25 @@ public class GameManager {
                     case LAGERRORCORRECTION:
                     case HIT:
                     case COLLISION:
-                        sendFurther(client, recv);
-                        break;
+                        sendFurther(client, recv); break;
                     case SHOOT:
-                        sendFurther(client, DataSetter.setBulletData(client.number, Arrays.copyOfRange(recv, 1, recv.length)));
-                        break;
+                        sendFurther(client, DataSetter.setBulletData(client.number, Arrays.copyOfRange(recv, 1, recv.length))); break;
                     case MOVE:
-                        sendFurther(client, DataSetter.setDestinationData(client.number, Arrays.copyOfRange(recv, 1, recv.length)));
-                        break;
+                        sendFurther(client, DataSetter.setDestinationData(client.number, Arrays.copyOfRange(recv, 1, recv.length))); break;
                     case GETSTATE:
-                        sendGameState(client);
-                        break;
+                        sendGameState(client); break;
                     case KILL:
-                        sendFurther(client,recv);
+                        sendFurther(client,recv); break;
                     case NAME:
-                        client.name = fun.stringFromBytes(recv,1,recv.length-1);
-                        sendFurther(client, DataSetter.setNameData(client.number, Arrays.copyOfRange(recv, 1, recv.length)));
-                        break;
+                        client.name = StringAndBytes.stringFromBytes(recv,1,recv.length-1);
+                        sendFurther(client, DataSetter.setNameData(client.number, Arrays.copyOfRange(recv, 1, recv.length))); break;
+                    case DISCONNECTED:
+                        sendFurther(client,new byte[]{(byte)DataType.DISCONNECTED.getId(), (byte)client.number});
+                        clients.remove(client); break;
+                    case RESET:
+                        sendFurther(client,DataSetter.resetPositionData(client.number,0,0));
+                        client.send(DataSetter.resetPositionData(client.number,0,0)); break;
+
                 }
             }
         }

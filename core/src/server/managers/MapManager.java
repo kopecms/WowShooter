@@ -1,4 +1,4 @@
-package server.logic;
+package server.managers;
 
 import wow.shooter.entities.Box;
 
@@ -7,10 +7,10 @@ import java.util.Vector;
 /**
  * Created by kopec on 2016-03-22.
  */
-public class Map {
+public class MapManager {
     private Vector<Box> boxes = new Vector<Box>();
     private int mapSize = 7;
-    public Map(){
+    public MapManager(){
         for(int i=-mapSize;i<=mapSize;i++){
             boxes.addElement(new Box(i*100,100*mapSize));
             boxes.addElement(new Box(i*100,-100*mapSize));

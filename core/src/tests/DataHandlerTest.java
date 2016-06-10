@@ -7,7 +7,7 @@ import wow.shooter.entities.Enemy;
 import wow.shooter.entities.Player;
 
 import java.util.Vector;
-import static wow.shooter.logic.DataHandler.*;
+import static wow.shooter.logic.IncomingDataHandler.*;
 import static functions.DataSetter.*;
 import static org.junit.Assert.*;
 
@@ -48,7 +48,6 @@ public class DataHandlerTest {
     @Test
     public void playerHit() throws Exception {
         handleHit(setHitData(1, 90), enemies, player);
-        ;
         assertEquals(player.getHealth(), 90);
     }
 

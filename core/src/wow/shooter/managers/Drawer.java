@@ -31,11 +31,20 @@ public class Drawer {
         textures = new TextureManager();
         font.setColor(Color.RED);
     }
+    public void drawGame() {
+        drawPlayers();
+        drawBoxes();
+        drawBullets();
+        drawStats();
+    }
     public void drawStats(){
-        font.draw(batch, data.player.name+" "+data.player.score,20,data.screenH-10);
-        int i = 20;
+        font.draw(batch, "Score list:",20,data.screenH-10);
+        font.draw(batch, data.player.name,20,data.screenH-30);
+        font.draw(batch, Integer.toString(data.player.score),100,data.screenH-30);
+        int i = 40;
         for(Enemy enemy: data.enemies){
             font.draw(batch, enemy.name+" "+enemy.score,20,data.screenH-10-i);
+            font.draw(batch, Integer.toString(enemy.score),100,data.screenH-10-i);
             i += 20;
         }
     }
@@ -47,9 +56,11 @@ public class Drawer {
         }
     }
 
-    public void drawMenuBox(){
-        batch.draw(textures.getTexture("menuBox"),data.centerx - 200, data.centery - 200);
-        font.draw(batch, "SIEMA",data.centerx-100,data.centery+100);
+    public void drawConnectionState(boolean connected){
+        if(connected)
+            font.draw(batch, "You are connected to server",data.screenW - 220 ,data.screenH-10);
+        else
+            font.draw(batch, "You are not connected to server",data.screenW - 220 ,data.screenH-10);
     }
 
     public void drawPlayers(){
